@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public class Group {
     public List<GridObject> Objects = new List<GridObject>();
 

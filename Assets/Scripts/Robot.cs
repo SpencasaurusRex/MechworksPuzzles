@@ -27,6 +27,7 @@ public class Robot : MonoBehaviour
         ConnectionSprites[3] = transform.GetChild(3).GetComponent<SpriteRenderer>();
 
         gridObject.OnConnect += OnConnect;
+        gridObject.OnDisconnect += OnDisconnect;
 
     }
 
@@ -47,7 +48,8 @@ public class Robot : MonoBehaviour
     }
 
     void OnDisconnect(Side side) {
-        ConnectionSprites[(int)side].enabled = false;   
+        print("Disconnecting " + side);
+        ConnectionSprites[(int)side].enabled = false;
     }
 
     void Tick() {

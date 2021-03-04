@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using TMPro;
 
 public class GameController : MonoBehaviour
 {
@@ -14,6 +15,16 @@ public class GameController : MonoBehaviour
     public float TickLength = 1f;
     public bool Running = true;
 
+    public Color Blue = Color.blue;
+    public Color Red = Color.red;
+    public Color Green = Color.green;
+
+    // References
+    public TextMeshProUGUI TickerText;
+
+    // Runtime
+    int tickNumber;
+
     void Start() {
         if (instance != null) {
             Destroy(gameObject);
@@ -25,7 +36,10 @@ public class GameController : MonoBehaviour
     IEnumerator TickCoroutine() {
         while (Running) {
             yield return new WaitForSeconds(TickLength);
+            tickNumber++;
+            TickerText.text = $"Ticks: {tickNumber}";
             OnTick?.Invoke();
+            DetermineGroups();
             HandleRequests();
         }
     }
@@ -34,7 +48,6 @@ public class GameController : MonoBehaviour
     Dictionary<Vector2Int, GridObject> GridObjects = new Dictionary<Vector2Int, GridObject>();
     
     List<Move> RequestedMoves = new List<Move>();
-    // HashSet<Vector2Int> Pushes = new HashSet<Vector2Int>();
 
     public void RequestMove(Move move) {
 		RequestedMoves.Add(move);
@@ -58,32 +71,25 @@ public class GameController : MonoBehaviour
         return null;
     }
 
+    void DetermineGroups() {
+        // Based on flood-fill algorithm
+        // TODO
+    }
+
     void HandleRequests() {
-		List<Move> validMoves = new List<Move>();
+        foreach (var request in RequestedMoves) {
+            print(request.From + " " + request.To + ": " + request.Object.Connected.Count);
+        }
+
+        List<Move> validMoves = new List<Move>();
         for (int i = 0; i < RequestedMoves.Count; i++)
         {
             var request = RequestedMoves[i];
+            var offset = request.To - request.From;
 			if (!validSpaces.Contains(request.To)) {
                 continue;
             }
-            // TODO: Allow move chaining
-            // TODO: Connected aren't pushables
-            if (GridObjects.ContainsKey(request.To)) {
-                var go = GridObjects[request.To];
-                if (!go.Pushable) {
-                    continue;
-                }
-                var pushableTarget = go.Location + request.To - request.From;
-                // Make sure pushable can move
-                if (!validSpaces.Contains(pushableTarget)) {
-                    continue;
-                }
-                if (GridObjects.ContainsKey(pushableTarget)) {
-                    continue;
-                }
-                validMoves.Add(new Move(go, request.To, pushableTarget));
-            }
-
+            
             bool duplicateDestination = false;
             for (int j = 0; j < RequestedMoves.Count; j++) {
                 if (j == i) continue;
@@ -94,7 +100,52 @@ public class GameController : MonoBehaviour
             }
             if (duplicateDestination) continue;
 
+            Move pushMove = null;
+
+            // TODO: Allow move chaining
+            if (GridObjects.ContainsKey(request.To)) {
+                var go = GridObjects[request.To];
+                if (!request.Object.Connected.Contains(go)) {
+                    if (!go.Pushable) {
+                        continue;
+                    }
+                    var pushableTarget = go.Location + offset;
+                    // Make sure pushable can move
+                    if (!validSpaces.Contains(pushableTarget)) {
+                        continue;
+                    }
+                    if (GridObjects.ContainsKey(pushableTarget)) {
+                        continue;
+                    }
+                    pushMove = new Move(go, request.To, pushableTarget);
+                }
+            }
+
+            // Validate connected
+            bool connectedValid = true;
+            foreach (var connected in request.Object.Connected) {
+                var connectedDestination = connected.Location + offset;
+                if (!validSpaces.Contains(connectedDestination)) {
+                    connectedValid = false;
+                    break;
+                }
+                if (GridObjects.ContainsKey(connectedDestination)) {
+                    var blocker = GridObjects[connectedDestination];
+                    if (blocker != request.Object) {
+                        connectedValid = false;
+                        break;
+                    }
+                }
+                validMoves.Add(new Move(connected, connected.Location, connectedDestination));
+            }
+            if (!connectedValid) continue;
+
+            print(request.From + " " + request.To);
             validMoves.Add(request);
+            if (pushMove != null) {
+                print(pushMove.From + " " + pushMove.To);
+                validMoves.Add(pushMove);
+            }
 		}
 
         foreach (var move in validMoves) {
@@ -102,6 +153,7 @@ public class GameController : MonoBehaviour
         }
         foreach (var move in validMoves) {
             GridObjects.Add(move.To, move.Object);
+            move.Object.Location = move.To;
             StartCoroutine(LerpMove(move));
         }
 
@@ -116,14 +168,13 @@ public class GameController : MonoBehaviour
             t += Time.deltaTime / TickLength;
             yield return new WaitForEndOfFrame();
         }
+
+        if (move.Object != null) {
+            move.Object.transform.position = move.To.ToFloat();
+        }
     }
 
     void OnDrawGizmos() {
-        //foreach (var move in RequestedMoves) {
-        //    Gizmos.color = Color.red;
-        //    Gizmos.DrawCube(move.From.ToFloat(), Vector3.one * 0.3f);
-        //    Gizmos.DrawLine(move.From.ToFloat(), move.To.ToFloat());
-        //}
         foreach (var pos in GridObjects.Keys)
         {
             Gizmos.color = Color.red;

@@ -15,10 +15,12 @@ public class GridObject : MonoBehaviour {
     public delegate void Disconnect(Side side);
     public event Connect OnDisconnect;
 
+    public List<GridObject> Connected = new List<GridObject>();
+
     public Group Group;
 
     void Awake() {
-        Group.Add(this);
+        // Group.Add(this);
     }
 
     void Start() {
@@ -34,9 +36,11 @@ public class GridObject : MonoBehaviour {
     }
 
     public void ConnectSide(Side side) {
+        print("Checking for object at " + (Location + SideUtil.ToVector(side)));
         var go = GameController.Instance.GetGridObject(Location + SideUtil.ToVector(side));
         if (go != null && !Connected.Contains(go)) {
-            Group.Add
+            print("Adding connection to " + go.gameObject.name);
+            Connected.Add(go);
             OnConnect?.Invoke(side);
         }
     }

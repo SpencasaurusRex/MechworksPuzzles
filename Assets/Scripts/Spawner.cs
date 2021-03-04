@@ -2,8 +2,12 @@
 
 public class Spawner : MonoBehaviour {
     // Configuration
-    public GameObject prefab;
-    
+    public ObjectColor Color;
+
+    public GameObject RedBoxPrefab;
+    public GameObject GreenBoxPrefab;
+    public GameObject BlueBoxPrefab;
+
     // Runtime
     Vector2Int Location;
 
@@ -11,11 +15,34 @@ public class Spawner : MonoBehaviour {
         var controller = FindObjectOfType<GameController>();
         controller.OnTick += Tick;
         Location = transform.position.xy().RoundToInt();
+        Create();
+
+        var sr = GetComponent<SpriteRenderer>();
+        switch (Color) {
+            case ObjectColor.Red:
+                sr.color = controller.Red;
+                break;
+            case ObjectColor.Green:
+                sr.color = controller.Green;
+                break;
+            case ObjectColor.Blue:
+                sr.color = controller.Blue;
+                break;
+        }
     }
 
     void Tick() {
-        if (GameController.Instance.GetGridObject(Location) == null) {
-            var go = Instantiate(prefab, Location.ToFloat(), Quaternion.identity);
+        Create();
+    }
+
+    void Create() {
+        if (GameController.Instance.GetGridObject(Location) == null)
+        {
+            GameObject prefab;
+            if (Color == ObjectColor.Red) prefab = RedBoxPrefab;
+            else if (Color == ObjectColor.Green) prefab = GreenBoxPrefab;
+            else prefab = BlueBoxPrefab;
+            Instantiate(prefab, Location.ToFloat(), Quaternion.identity);
         }
     }
 }

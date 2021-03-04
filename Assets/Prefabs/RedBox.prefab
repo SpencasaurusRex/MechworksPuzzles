@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 3654487990242948658}
   - component: {fileID: 3654487990242948661}
   - component: {fileID: 651787043}
+  - component: {fileID: 8562354153050341513}
   m_Layer: 0
-  m_Name: Box
+  m_Name: RedBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -73,7 +74,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: da4b87554d08cd846917dc88d59430d5, type: 3}
-  m_Color: {r: 0.5660378, g: 0.29685867, b: 0, a: 1}
+  m_Color: {r: 1, g: 0, b: 0.017913818, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -98,3 +99,16 @@ MonoBehaviour:
   Pushable: 1
   Location: {x: 0, y: 0}
   Connected: []
+--- !u!114 &8562354153050341513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3654487990242948660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b11d82028872dad45b47de64aa7ea457, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Color: 0
