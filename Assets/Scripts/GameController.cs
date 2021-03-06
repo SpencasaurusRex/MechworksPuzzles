@@ -10,26 +10,28 @@ public class GameController : MonoBehaviour
 
     public delegate void Tick();
     public event Tick OnTick;
+    public event Tick OnTick2;
 
     // Configuration
     public float TickLength = 1f;
     public bool Running = true;
 
-    public Color Blue = Color.blue;
-    public Color Red = Color.red;
-    public Color Green = Color.green;
-
+    public Color[] Colors = { Color.red, Color.green, Color.blue };
+ 
     // References
     public TextMeshProUGUI TickerText;
 
     // Runtime
     int tickNumber;
 
-    void Start() {
+    void Awake() {
         if (instance != null) {
             Destroy(gameObject);
         }
         else instance = this;
+    }
+
+    void Start() {
         StartCoroutine(TickCoroutine());
     }
 
@@ -39,13 +41,14 @@ public class GameController : MonoBehaviour
             tickNumber++;
             TickerText.text = $"Ticks: {tickNumber}";
             OnTick?.Invoke();
+            OnTick2?.Invoke();
             DetermineGroups();
             HandleRequests();
         }
     }
 
-    HashSet<Vector2Int> validSpaces = new HashSet<Vector2Int>();
-    Dictionary<Vector2Int, GridObject> GridObjects = new Dictionary<Vector2Int, GridObject>();
+    HashSet<Vector3Int> validSpaces = new HashSet<Vector3Int>();
+    Dictionary<Vector3Int, GridObject> GridObjects = new Dictionary<Vector3Int, GridObject>();
     
     List<Move> RequestedMoves = new List<Move>();
 
@@ -53,18 +56,18 @@ public class GameController : MonoBehaviour
 		RequestedMoves.Add(move);
     }
 
-    public void SetValidSpace(Vector2Int space) {
-        validSpaces.Add(space);
+    public void SetValidSpace(Vector3Int space) {
+        validSpaces.Add(space.GroundLayer());
     }
 
     public void SetGridObject(GridObject obj) {
         GridObjects.Add(obj.Location, obj);
     }
 
-    public void RemoveGridObject(Vector2Int location) {
+    public void RemoveGridObject(Vector3Int location) {
         GridObjects.Remove(location);
     }
-    public GridObject GetGridObject(Vector2Int position) {
+    public GridObject GetGridObject(Vector3Int position) {
         if (GridObjects.ContainsKey(position)) {
             return GridObjects[position];
         }
@@ -76,17 +79,60 @@ public class GameController : MonoBehaviour
         // TODO
     }
 
-    void HandleRequests() {
-        foreach (var request in RequestedMoves) {
-            print(request.From + " " + request.To + ": " + request.Object.Connected.Count);
+    bool IsValidSpace(Vector3Int location) {
+        return validSpaces.Contains(location.GroundLayer());
+    }
+
+    bool MoveBlock(GridObject block, Vector3Int delta, GridObject pusher, List<Move> validMoves) {
+        // Accumulate connected blocks
+        HashSet<GridObject> counted = new HashSet<GridObject>();
+        List<GridObject> gos = new List<GridObject>();
+        Queue<GridObject> toProcess = new Queue<GridObject>();
+
+        counted.Add(block);
+        toProcess.Enqueue(block);
+
+        while (toProcess.Count > 0) {
+            var gridObject = toProcess.Dequeue();
+            gos.Add(gridObject);
+            for (int i = 0; i < 4; i++) {
+                var c = gridObject.Connected[i];
+                if (c != null && !counted.Contains(c)) {
+                    counted.Add(c);
+                    toProcess.Enqueue(c);
+                }
+            }
         }
 
+        foreach (var go in gos) {
+            var targetLocation = go.Location + delta;
+            var targetObject = GetGridObject(targetLocation);
+            if (targetObject != null) {
+                // TODO: Allow move chaining
+                if (!counted.Contains(targetObject) && targetObject != pusher) {
+                    // There is something in our way
+                    return false;
+                }
+            }
+            if (!IsValidSpace(targetLocation)) {
+                return false;
+            }
+        }
+
+        foreach (var go in gos) {
+            var targetLocation = go.Location + delta;
+            validMoves.Add(new Move(go, go.Location, targetLocation));
+        }
+        return true;
+    }
+
+    void HandleRequests() {
         List<Move> validMoves = new List<Move>();
         for (int i = 0; i < RequestedMoves.Count; i++)
         {
             var request = RequestedMoves[i];
             var offset = request.To - request.From;
-			if (!validSpaces.Contains(request.To)) {
+			if (!IsValidSpace(request.To)) {
                 continue;
             }
             
@@ -100,52 +146,37 @@ public class GameController : MonoBehaviour
             }
             if (duplicateDestination) continue;
 
-            Move pushMove = null;
+            List<Move> externalMoves = new List<Move>();
 
-            // TODO: Allow move chaining
+            var delta = request.To - request.From;
+
+            // Check pushes
             if (GridObjects.ContainsKey(request.To)) {
                 var go = GridObjects[request.To];
-                if (!request.Object.Connected.Contains(go)) {
+                if (!request.Object.IsConnected(go)) {
                     if (!go.Pushable) {
                         continue;
                     }
-                    var pushableTarget = go.Location + offset;
-                    // Make sure pushable can move
-                    if (!validSpaces.Contains(pushableTarget)) {
+                    if (!MoveBlock(go, delta, request.Object, externalMoves)) {
                         continue;
                     }
-                    if (GridObjects.ContainsKey(pushableTarget)) {
-                        continue;
-                    }
-                    pushMove = new Move(go, request.To, pushableTarget);
                 }
             }
 
-            // Validate connected
-            bool connectedValid = true;
+            // Check connected
+            var connectedValid = true;
             foreach (var connected in request.Object.Connected) {
-                var connectedDestination = connected.Location + offset;
-                if (!validSpaces.Contains(connectedDestination)) {
+                if (connected == null) {
+                    continue;
+                }
+                if (!MoveBlock(connected, delta, request.Object, externalMoves)) {
                     connectedValid = false;
-                    break;
                 }
-                if (GridObjects.ContainsKey(connectedDestination)) {
-                    var blocker = GridObjects[connectedDestination];
-                    if (blocker != request.Object) {
-                        connectedValid = false;
-                        break;
-                    }
-                }
-                validMoves.Add(new Move(connected, connected.Location, connectedDestination));
             }
             if (!connectedValid) continue;
 
-            print(request.From + " " + request.To);
             validMoves.Add(request);
-            if (pushMove != null) {
-                print(pushMove.From + " " + pushMove.To);
-                validMoves.Add(pushMove);
-            }
+            validMoves.AddRange(externalMoves);
 		}
 
         foreach (var move in validMoves) {
@@ -164,7 +195,7 @@ public class GameController : MonoBehaviour
         float t = 0;
         while (t < 1 && move.Object != null)
         {
-            move.Object.transform.position = Vector2.Lerp(move.From, move.To, t);
+            move.Object.transform.position = Vector3.Lerp(move.From, move.To, t);
             t += Time.deltaTime / TickLength;
             yield return new WaitForEndOfFrame();
         }
@@ -177,6 +208,9 @@ public class GameController : MonoBehaviour
     void OnDrawGizmos() {
         foreach (var pos in GridObjects.Keys)
         {
+            if (pos.z == -1) {
+                continue;
+            }
             Gizmos.color = Color.red;
             Gizmos.DrawCube(pos.ToFloat(), Vector3.one * 0.5f);
         }

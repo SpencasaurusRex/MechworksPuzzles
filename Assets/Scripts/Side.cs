@@ -8,17 +8,17 @@ public enum Side {
 }
 
 public class SideUtil {
-    public static Vector2Int ToVector(Side side) {
+    public static Vector3Int ToVector(Side side) {
         switch (side) {
             case Side.Right: 
-                return Vector2Int.right;
+                return Vector3Int.right;
             case Side.Up:
-                return Vector2Int.up;
+                return Vector3Int.up;
             case Side.Left:
-                return Vector2Int.left;
+                return Vector3Int.left;
             case Side.Down:
-                return Vector2Int.down;
+                return Vector3Int.down;
         }
-        return Vector2Int.zero;
+        return Vector3Int.zero;
     }
 }

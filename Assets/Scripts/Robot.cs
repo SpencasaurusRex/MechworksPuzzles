@@ -21,11 +21,10 @@ public class Robot : MonoBehaviour
         ParseCode();
 
         ConnectionSprites = new SpriteRenderer[4];
-        ConnectionSprites[0] = transform.GetChild(0).GetComponent<SpriteRenderer>();
-        ConnectionSprites[1] = transform.GetChild(1).GetComponent<SpriteRenderer>();
-        ConnectionSprites[2] = transform.GetChild(2).GetComponent<SpriteRenderer>();
-        ConnectionSprites[3] = transform.GetChild(3).GetComponent<SpriteRenderer>();
-
+        for (int i = 0; i < 4; i++) {
+            ConnectionSprites[i] = transform.GetChild(i).GetComponent<SpriteRenderer>();    
+        }
+        
         gridObject.OnConnect += OnConnect;
         gridObject.OnDisconnect += OnDisconnect;
 
@@ -43,12 +42,11 @@ public class Robot : MonoBehaviour
             MonoBehaviour.print(str);
     }
 
-    void OnConnect(Side side) {
+    void OnConnect(Side side, GridObject obj) {
         ConnectionSprites[(int)side].enabled = true;
     }
 
-    void OnDisconnect(Side side) {
-        print("Disconnecting " + side);
+    void OnDisconnect(Side side, GridObject obj) {
         ConnectionSprites[(int)side].enabled = false;
     }
 
@@ -68,19 +66,19 @@ public class Robot : MonoBehaviour
                 argument = words[1];
                 if (argument == "LEFT") {
                     print("Moving left");
-                    gridObject.RequestMove(Vector2Int.left);
+                    gridObject.RequestMove(Vector3Int.left);
                 }
                 else if (argument == "RIGHT") {
                     print("Moving right");
-                    gridObject.RequestMove(Vector2Int.right);
+                    gridObject.RequestMove(Vector3Int.right);
                 }
                 else if (argument == "UP") {
                     print("Moving up");
-                    gridObject.RequestMove(Vector2Int.up);
+                    gridObject.RequestMove(Vector3Int.up);
                 }
                 else if (argument == "DOWN") {
                     print("Moving down");
-                    gridObject.RequestMove(Vector2Int.down);
+                    gridObject.RequestMove(Vector3Int.down);
                 }
                 else {
                     print("Unknown argument to MOVE command: " + argument);

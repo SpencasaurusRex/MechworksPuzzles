@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 3504545801864168438}
   - component: {fileID: 3504545801864168439}
   - component: {fileID: 1628328288}
-  - component: {fileID: 1628328291}
+  - component: {fileID: 4292612063560622174}
+  - component: {fileID: 3029164372088378564}
   m_Layer: 0
   m_Name: Target
   m_TagString: Untagged
@@ -96,7 +97,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5ffbec8d48dd124e81347377aea24d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1628328291
+--- !u!114 &4292612063560622174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3504545801864168392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39a9c6cd5e78665499e1c28628b3da17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Pushable: 0
+  Location: {x: 0, y: 0, z: 0}
+  Connected: []
+--- !u!114 &3029164372088378564
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -108,3 +124,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 988fc1c57b3488141b9cb7442d4bd34a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GoalCount: 0
+  GoalColor: 0
+  SyncedNeighbors: 00000000

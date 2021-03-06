@@ -2,29 +2,17 @@ using UnityEngine;
 public static class Util {    
     #region Swizzle
     public static Vector2 xx (this Vector3 v) { return new Vector2(v.x, v.x); }
-
     public static Vector2 xy (this Vector3 v) { return new Vector2(v.x, v.y); }
-
     public static Vector2 yx (this Vector3 v) { return new Vector2(v.y, v.x); }
-
     public static Vector2 yy (this Vector3 v) { return new Vector2(v.y, v.y); }
-
     public static Vector2 zx (this Vector3 v) { return new Vector2(v.z, v.x); }
-    
     public static Vector2 xz (this Vector3 v) { return new Vector2(v.x, v.z); }
-
     public static Vector2 zy (this Vector3 v) { return new Vector2(v.z, v.y); }
-
     public static Vector2 yz (this Vector3 v) { return new Vector2(v.y, v.z); }
-
     public static Vector2 zz (this Vector3 v) { return new Vector2(v.z, v.z); }
-
     public static Vector2 xx (this Vector2 v) { return new Vector2(v.x, v.x); }
-
     public static Vector2 xy (this Vector2 v) { return new Vector2(v.x, v.y); }
-
     public static Vector2 yx (this Vector2 v) { return new Vector2(v.y, v.x); }
-
     public static Vector2 yy (this Vector2 v) { return new Vector2(v.y, v.y); }
 
 
@@ -75,4 +63,7 @@ public static class Util {
 
     public static Vector3 ToFloat(this Vector3Int v) { return new Vector3(v.x, v.y, v.z); }
     public static Vector2 ToFloat(this Vector2Int v) { return new Vector2(v.x, v.y); }
+
+    public static Vector3Int ObjectLayer(this Vector3Int v) { return new Vector3Int(v.x, v.y, GridLayer.Object); }
+    public static Vector3Int GroundLayer(this Vector3Int v) { return new Vector3Int(v.x, v.y, GridLayer.Ground); }
 }

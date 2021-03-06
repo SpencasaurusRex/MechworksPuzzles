@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 452612871244458526}
   - component: {fileID: 452612871244458520}
   - component: {fileID: 452612871244458527}
-  - component: {fileID: 209673882}
+  - component: {fileID: 2191857846739932232}
   m_Layer: 0
   m_Name: Spawner
   m_TagString: Untagged
@@ -46,9 +46,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Color: 0
-  RedBoxPrefab: {fileID: 3654487990242948660, guid: c55973f9955c259448263b77bbe6d800, type: 3}
-  GreenBoxPrefab: {fileID: 3654487990242948660, guid: 47404e90360fef147a6197656a8256f3, type: 3}
-  BlueBoxPrefab: {fileID: 3654487990242948660, guid: 47bb9f25c4dbd894ba6d9d48a8309f44, type: 3}
+  BlockPrefabs:
+  - {fileID: 5044604087420950542, guid: ca00b29c3006bb94fa4f1b62b802e6b4, type: 3}
+  - {fileID: 5044604087420950542, guid: ed08d064f3647e3469bf3f752574ae2e, type: 3}
+  - {fileID: 5044604087420950542, guid: 742ff91a6c8dbe545a2b85dde69dff20, type: 3}
 --- !u!212 &452612871244458527
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -100,7 +101,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &209673882
+--- !u!114 &2191857846739932232
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -109,6 +110,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 452612871244458525}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5ffbec8d48dd124e81347377aea24d0, type: 3}
+  m_Script: {fileID: 11500000, guid: 39a9c6cd5e78665499e1c28628b3da17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Pushable: 0
+  Location: {x: 0, y: 0, z: 0}
+  Connected: []

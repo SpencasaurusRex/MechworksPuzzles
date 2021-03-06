@@ -1,56 +1,60 @@
 using UnityEngine;
-using System.Collections.Generic;
 
+[SelectionBase]
 public class GridObject : MonoBehaviour {    
 
     // Configuration
     public bool Pushable;
-	
-    // Runtime
-    public Vector2Int Location;
 
-    public delegate void Connect(Side side);
+    // Runtime
+    public Vector3Int Location;
+
+    public delegate void Connect(Side side, GridObject go);
     public event Connect OnConnect;
 
-    public delegate void Disconnect(Side side);
+    public delegate void Disconnect(Side side, GridObject go);
     public event Connect OnDisconnect;
 
-    public List<GridObject> Connected = new List<GridObject>();
+    public GridObject[] Connected;
 
     public Group Group;
 
     void Awake() {
-        // Group.Add(this);
-    }
-
-    void Start() {
-        var controller = FindObjectOfType<GameController>();
-        Location = transform.position.xy().RoundToInt();
+        Connected = new GridObject[4];
+        Location = transform.position.xyz().RoundToInt();
         transform.position = transform.position.RoundToInt().ToFloat();
-        controller.SetGridObject(this);
-
+        GameController.Instance.SetGridObject(this);
     }
 
-    public void RequestMove(Vector2Int delta) {
+    public void RequestMove(Vector3Int delta) {
     	GameController.Instance.RequestMove(new Move(this, Location, Location + delta));
     }
 
     public void ConnectSide(Side side) {
-        print("Checking for object at " + (Location + SideUtil.ToVector(side)));
+        int s = (int)side;
+        if (Connected[s] != null) return;
         var go = GameController.Instance.GetGridObject(Location + SideUtil.ToVector(side));
-        if (go != null && !Connected.Contains(go)) {
-            print("Adding connection to " + go.gameObject.name);
-            Connected.Add(go);
-            OnConnect?.Invoke(side);
+        if (go != null) {
+            Connected[s] = go;
+            OnConnect?.Invoke(side, Connected[s]);
         }
     }
 
     public void DisconnectSide(Side side) {
+        int s = (int)side;
+        if (Connected[s] == null) return;
         var go = GameController.Instance.GetGridObject(Location + SideUtil.ToVector(side));
         if (go != null) {
-            Connected.Remove(go);
-            OnDisconnect?.Invoke(side);
+            Connected[s] = null;
+            OnDisconnect?.Invoke(side, Connected[s]);
         }
+    }
+
+    public bool IsConnected(GridObject go) {
+        for (int i = 0; i < 4; i++) {
+            if (Connected[i] == go) return true;
+        }
+        return false;
     }
 
     void OnDestroy() {
