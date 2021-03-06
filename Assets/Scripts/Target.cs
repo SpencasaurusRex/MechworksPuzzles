@@ -47,6 +47,7 @@ public class Target : MonoBehaviour
     }
 
     void Tick2() {
+        if (!Satisfied) return;
         for (int i = 0; i < 4; i++) {
             if (SyncedNeighbors[i] && !neighborTargets[i].Satisfied) {
                 return;

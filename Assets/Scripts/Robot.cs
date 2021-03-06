@@ -140,6 +140,8 @@ public class Robot : MonoBehaviour
                     print("Unknown argument to GRAB command: " + argument);
                 }
                 break;
+            case "SYNC":
+                // TODO:
             case "WAIT":
                 // noop
                 break;

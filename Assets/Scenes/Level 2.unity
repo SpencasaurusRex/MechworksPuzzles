@@ -507,7 +507,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bde54057c7c45c341acc975cd7d0b2e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TickLength: 0.01
+  TickLength: 0.2
   Running: 1
   Colors:
   - {r: 1, g: 0, b: 0, a: 1}
@@ -1177,6 +1177,10 @@ PrefabInstance:
     - target: {fileID: 1628328291, guid: 7b6add91c409ad74f95ad74291c648f1, type: 3}
       propertyPath: GoalCount
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3029164372088378564, guid: 7b6add91c409ad74f95ad74291c648f1, type: 3}
+      propertyPath: GoalColor
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3504545801864168392, guid: 7b6add91c409ad74f95ad74291c648f1, type: 3}
       propertyPath: m_Name

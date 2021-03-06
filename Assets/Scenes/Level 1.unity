@@ -168,7 +168,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 452612871244458526, guid: 4d0a2123b3f907a4a8b21f0f25095a41, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 452612871244458526, guid: 4d0a2123b3f907a4a8b21f0f25095a41, type: 3}
       propertyPath: m_LocalRotation.x
@@ -503,11 +503,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bde54057c7c45c341acc975cd7d0b2e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TickLength: 0.005
+  TickLength: 0.2
   Running: 1
-  Blue: {r: 0, g: 0, b: 1, a: 1}
-  Red: {r: 1, g: 0, b: 0, a: 1}
-  Green: {r: 0, g: 1, b: 0, a: 1}
+  Colors:
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 0, g: 1, b: 0, a: 1}
+  - {r: 0, g: 0, b: 1, a: 1}
   TickerText: {fileID: 1533085509}
 --- !u!1 &1533085507
 GameObject:
@@ -819,7 +820,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1916009727}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -974,6 +975,10 @@ PrefabInstance:
       propertyPath: GoalCount
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 3029164372088378564, guid: 7b6add91c409ad74f95ad74291c648f1, type: 3}
+      propertyPath: GoalColor
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3504545801864168392, guid: 7b6add91c409ad74f95ad74291c648f1, type: 3}
       propertyPath: m_Name
       value: Target
@@ -988,7 +993,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3504545801864168438, guid: 7b6add91c409ad74f95ad74291c648f1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 3504545801864168438, guid: 7b6add91c409ad74f95ad74291c648f1, type: 3}
       propertyPath: m_LocalRotation.x

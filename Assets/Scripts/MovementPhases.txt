@@ -1,0 +1,17 @@
+Dictionary<Vector3Int, Move>
+0. Accumulate moves
+1. Propagate moves to blocks
+2. Move duplication checks
+    Block moves that has same start, different destination
+    Deduplicate moves that have same start, same destination
+3. Setup the dependency chain
+    Robot->block
+    Robot->robot
+    block->block
+    block->robot
+4. Evaluate the moves
+    check if blocked
+    Moving into a valid space
+    Cant be moving into a GridObject unless a dependency has been setup for it
+    Make sure no other moves, move to our destination spot
+    If fails, notify the dependency chain

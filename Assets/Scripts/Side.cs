@@ -21,4 +21,8 @@ public class SideUtil {
         }
         return Vector3Int.zero;
     }
+
+    public static Vector3Int ToVector(int i) {
+        return ToVector((Side)i);
+    }
 }

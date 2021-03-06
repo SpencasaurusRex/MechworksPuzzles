@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using System.Linq;
 using TMPro;
 
 public class GameController : MonoBehaviour
@@ -42,14 +43,13 @@ public class GameController : MonoBehaviour
             TickerText.text = $"Ticks: {tickNumber}";
             OnTick?.Invoke();
             OnTick2?.Invoke();
-            DetermineGroups();
             HandleRequests();
         }
     }
 
     HashSet<Vector3Int> validSpaces = new HashSet<Vector3Int>();
     Dictionary<Vector3Int, GridObject> GridObjects = new Dictionary<Vector3Int, GridObject>();
-    
+
     List<Move> RequestedMoves = new List<Move>();
 
     public void RequestMove(Move move) {
@@ -74,19 +74,14 @@ public class GameController : MonoBehaviour
         return null;
     }
 
-    void DetermineGroups() {
-        // Based on flood-fill algorithm
-        // TODO
-    }
-
     bool IsValidSpace(Vector3Int location) {
         return validSpaces.Contains(location.GroundLayer());
     }
 
-    bool MoveBlock(GridObject block, Vector3Int delta, GridObject pusher, List<Move> validMoves) {
-        // Accumulate connected blocks
-        HashSet<GridObject> counted = new HashSet<GridObject>();
+    List<GridObject> ConnectedBlocks(GridObject block) {
+        // TODO: cache this?
         List<GridObject> gos = new List<GridObject>();
+        HashSet<GridObject> counted = new HashSet<GridObject>();
         Queue<GridObject> toProcess = new Queue<GridObject>();
 
         counted.Add(block);
@@ -103,90 +98,137 @@ public class GameController : MonoBehaviour
                 }
             }
         }
-
-        foreach (var go in gos) {
-            var targetLocation = go.Location + delta;
-            var targetObject = GetGridObject(targetLocation);
-            if (targetObject != null) {
-                // TODO: Allow move chaining
-                if (!counted.Contains(targetObject) && targetObject != pusher) {
-                    // There is something in our way
-                    return false;
-                }
-            }
-            if (!IsValidSpace(targetLocation)) {
-                return false;
-            }
-        }
-
-        foreach (var go in gos) {
-            var targetLocation = go.Location + delta;
-            validMoves.Add(new Move(go, go.Location, targetLocation));
-        }
-        return true;
+        return gos;
     }
 
     void HandleRequests() {
-        List<Move> validMoves = new List<Move>();
-        for (int i = 0; i < RequestedMoves.Count; i++)
-        {
-            var request = RequestedMoves[i];
-            var offset = request.To - request.From;
-			if (!IsValidSpace(request.To)) {
-                continue;
-            }
-            
-            bool duplicateDestination = false;
-            for (int j = 0; j < RequestedMoves.Count; j++) {
-                if (j == i) continue;
-                if (request.To == RequestedMoves[j].To) {
-                    duplicateDestination = true;
-                    break;
+        
+
+        // 1. Propagate moves to blocks
+        List<Move> propagatedMoves = new List<Move>();
+        foreach (var move in RequestedMoves) {
+            propagatedMoves.Add(move);     
+            var go = GetGridObject(move.To);
+            // Pushes
+            if (go != null && go.GetComponent<Block>() != null) {
+                var wholeBlock = ConnectedBlocks(go);
+                foreach (var block in wholeBlock) {
+                    var pushMove = new Move(block, block.Location, block.Location + move.Delta);
+                    pushMove.Dependents.Add(move);
+                    move.Dependents.Add(pushMove);
+                    propagatedMoves.Add(pushMove);
                 }
             }
-            if (duplicateDestination) continue;
+            // Connections
+            for (int i = 0; i < 4; i++) {
+                go = move.Object.Connected[i];
+                if (go == null) continue;
+                // Assumes robots can only be connected to Blocks
+                var wholeBlock = ConnectedBlocks(go);
+                foreach (var block in wholeBlock) {
+                    var dragMove = new Move(block, block.Location, block.Location + move.Delta);
+                    // Possibility for duplication?
+                    dragMove.Dependents.Add(move);
+                    move.Dependents.Add(dragMove);
+                    propagatedMoves.Add(dragMove);
+                }
+            }
+        }
 
-            List<Move> externalMoves = new List<Move>();
 
-            var delta = request.To - request.From;
+        // 2. Move duplication checks
+        Dictionary<Vector3Int, Move> moveStarts = new Dictionary<Vector3Int, Move>();
+        Dictionary<Vector3Int, Move> moveEnds = new Dictionary<Vector3Int, Move>();
+        List<Move> distinctMoves = new List<Move>();
+        foreach (var move in propagatedMoves) {
+            if (moveStarts.ContainsKey(move.From)) {
+                var existingMove = moveStarts[move.From];
+                if (existingMove.To == move.To) {
+                    // Same destination, no problem
+                }
+                else {
+                    move.Block();
+                    existingMove.Block();
+                }
+            }
+            else {
+                moveStarts.Add(move.From, move);
+                distinctMoves.Add(move);
+            }
 
-            // Check pushes
-            if (GridObjects.ContainsKey(request.To)) {
-                var go = GridObjects[request.To];
-                if (!request.Object.IsConnected(go)) {
-                    if (!go.Pushable) {
-                        continue;
+            if (moveEnds.ContainsKey(move.To)) {
+                var existingMove = moveEnds[move.To];
+                if (existingMove.From == move.From) {
+                    // Same move, just deduplicate
+                }
+                else {
+                    move.Block();
+                    existingMove.Block();
+                }
+            }
+            else {
+                moveEnds.Add(move.To, move);
+            }
+        }
+
+
+        // 3. Setup dependency chain
+        foreach (var move in distinctMoves) {
+            var go = GetGridObject(move.To);
+            if (go == null) continue;
+            // Something is in our way, check if it is moving
+            if (moveStarts.ContainsKey(move.To)) {
+                var otherMove = moveStarts[move.To];
+                if (otherMove.Blocked) {
+                    move.Block();
+                }
+                else if (otherMove.Delta == move.Delta) {
+                    // Setup dependency
+                    if (!otherMove.Dependents.Contains(move)) {
+                        otherMove.Dependents.Add(move);
                     }
-                    if (!MoveBlock(go, delta, request.Object, externalMoves)) {
-                        continue;
-                    }
+                }
+                else {
+                    // Moving in a different direction
+                    move.Block();
                 }
             }
+            else {
+                move.Block();
+            }
+            // Add dependencies to connected blocks
+            for (int i = 0; i < 4; i++) {
+                var connection = move.Object.Connected[i];
+                if (connection == null) continue;
+                var connectionLocation = move.From + SideUtil.ToVector(i);
+                if (!moveStarts.ContainsKey(connectionLocation)) {
 
-            // Check connected
-            var connectedValid = true;
-            foreach (var connected in request.Object.Connected) {
-                if (connected == null) {
-                    continue;
-                }
-                if (!MoveBlock(connected, delta, request.Object, externalMoves)) {
-                    connectedValid = false;
                 }
             }
-            if (!connectedValid) continue;
+        }
 
-            validMoves.Add(request);
-            validMoves.AddRange(externalMoves);
-		}
 
-        foreach (var move in validMoves) {
+        // 4. Evaluate the moves
+        foreach (var move in distinctMoves) {
+            if (move.Blocked) continue;
+            if (!IsValidSpace(move.To)) {
+                move.Block();
+            }
+        }
+
+        
+        // 5. Perform the moves
+        foreach (var move in distinctMoves) {
+            if (move.Blocked) continue;
             GridObjects.Remove(move.From);
         }
-        foreach (var move in validMoves) {
+        foreach (var move in distinctMoves) {
+            if (move.Blocked) continue;
             GridObjects.Add(move.To, move.Object);
             move.Object.Location = move.To;
             StartCoroutine(LerpMove(move));
         }
+
 
         RequestedMoves.Clear();
     }
@@ -206,6 +248,12 @@ public class GameController : MonoBehaviour
     }
 
     void OnDrawGizmos() {
+        //foreach (var pos in validSpaces)
+        //{
+        //    Gizmos.color = Color.blue;
+        //    Gizmos.DrawCube(pos.ToFloat(), Vector3.one * 0.6f);
+        //}
+
         foreach (var pos in GridObjects.Keys)
         {
             if (pos.z == -1) {
