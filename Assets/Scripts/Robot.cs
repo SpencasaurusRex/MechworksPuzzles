@@ -13,11 +13,15 @@ public class Robot : MonoBehaviour
 
     SpriteRenderer[] ConnectionSprites;
 
+    void Awake() {
+        gridObject = GetComponent<GridObject>();
+        gridObject.Type = GridType.Robot;
+    }
+
     void Start()
     {
         var controller = FindObjectOfType<GameController>();
         controller.OnTick += Tick;
-        gridObject = GetComponent<GridObject>();
         ParseCode();
 
         ConnectionSprites = new SpriteRenderer[4];

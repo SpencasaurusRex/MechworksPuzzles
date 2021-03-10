@@ -40,7 +40,8 @@ public class GameController : MonoBehaviour
         while (Running) {
             yield return new WaitForSeconds(TickLength);
             tickNumber++;
-            TickerText.text = $"Ticks: {tickNumber}";
+            if (TickerText != null)
+                TickerText.text = $"Ticks: {tickNumber}";
             OnTick?.Invoke();
             OnTick2?.Invoke();
             HandleRequests();
@@ -78,7 +79,7 @@ public class GameController : MonoBehaviour
         return validSpaces.Contains(location.GroundLayer());
     }
 
-    List<GridObject> ConnectedBlocks(GridObject block) {
+    List<GridObject> Connected(GridObject block) {
         // TODO: cache this?
         List<GridObject> gos = new List<GridObject>();
         HashSet<GridObject> counted = new HashSet<GridObject>();
@@ -102,16 +103,16 @@ public class GameController : MonoBehaviour
     }
 
     void HandleRequests() {
-        
+        System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
 
-        // 1. Propagate moves to blocks
+        // 1. Propagate moves
         List<Move> propagatedMoves = new List<Move>();
         foreach (var move in RequestedMoves) {
             propagatedMoves.Add(move);     
             var go = GetGridObject(move.To);
             // Pushes
-            if (go != null && go.GetComponent<Block>() != null) {
-                var wholeBlock = ConnectedBlocks(go);
+            if (go != null) {
+                var wholeBlock = Connected(go);
                 foreach (var block in wholeBlock) {
                     var pushMove = new Move(block, block.Location, block.Location + move.Delta);
                     pushMove.Dependents.Add(move);
@@ -123,11 +124,9 @@ public class GameController : MonoBehaviour
             for (int i = 0; i < 4; i++) {
                 go = move.Object.Connected[i];
                 if (go == null) continue;
-                // Assumes robots can only be connected to Blocks
-                var wholeBlock = ConnectedBlocks(go);
+                var wholeBlock = Connected(go);
                 foreach (var block in wholeBlock) {
                     var dragMove = new Move(block, block.Location, block.Location + move.Delta);
-                    // Possibility for duplication?
                     dragMove.Dependents.Add(move);
                     move.Dependents.Add(dragMove);
                     propagatedMoves.Add(dragMove);
@@ -231,6 +230,8 @@ public class GameController : MonoBehaviour
 
 
         RequestedMoves.Clear();
+
+        sw.Stop();
     }
 
     IEnumerator LerpMove(Move move) {

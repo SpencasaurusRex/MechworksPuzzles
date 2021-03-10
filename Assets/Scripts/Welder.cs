@@ -8,9 +8,13 @@ public class Welder : MonoBehaviour
 
     Welder[] connectedWelders = new Welder[4];
 
+    void Awake() {
+        gridObject = GetComponent<GridObject>();
+        gridObject.Type = GridType.Welder;
+    }
+
     void Start() {
         GameController.Instance.OnTick += Tick;
-        gridObject = GetComponent<GridObject>();
         GameController.Instance.SetValidSpace(gridObject.Location);
 
         // Find connected welders

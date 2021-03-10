@@ -15,9 +15,10 @@ public class GridObject : MonoBehaviour {
     public delegate void Disconnect(Side side, GridObject go);
     public event Connect OnDisconnect;
 
+    public GridType Type;
     public GridObject[] Connected;
 
-    public Group Group;
+    public Group Group = new Group();
 
     void Awake() {
         Connected = new GridObject[4];
@@ -34,6 +35,7 @@ public class GridObject : MonoBehaviour {
         int s = (int)side;
         if (Connected[s] != null) return;
         var go = GameController.Instance.GetGridObject(Location + SideUtil.ToVector(side));
+        
         if (go != null) {
             Connected[s] = go;
             OnConnect?.Invoke(side, Connected[s]);
@@ -43,18 +45,8 @@ public class GridObject : MonoBehaviour {
     public void DisconnectSide(Side side) {
         int s = (int)side;
         if (Connected[s] == null) return;
-        var go = GameController.Instance.GetGridObject(Location + SideUtil.ToVector(side));
-        if (go != null) {
-            Connected[s] = null;
-            OnDisconnect?.Invoke(side, Connected[s]);
-        }
-    }
-
-    public bool IsConnected(GridObject go) {
-        for (int i = 0; i < 4; i++) {
-            if (Connected[i] == go) return true;
-        }
-        return false;
+        Connected[s] = null;
+        OnDisconnect?.Invoke(side, Connected[s]);
     }
 
     void OnDestroy() {

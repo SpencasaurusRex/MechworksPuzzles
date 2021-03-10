@@ -9,9 +9,13 @@ public class Spawner : MonoBehaviour {
     // Runtime
     GridObject gridObject;
 
+    void Awake() {
+        gridObject = GetComponent<GridObject>();
+        gridObject.Type = GridType.Spawner;
+    }
+
     void Start() {
         GameController.Instance.OnTick += Tick;
-        gridObject = GetComponent<GridObject>();
         GameController.Instance.SetValidSpace(gridObject.Location);
 
         Create();

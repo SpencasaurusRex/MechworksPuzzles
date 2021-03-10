@@ -14,11 +14,15 @@ public class Target : MonoBehaviour
     int currentCount;
     Target[] neighborTargets = new Target[4];
 
+    void Awake() {
+        gridObject = GetComponent<GridObject>();
+        gridObject.Type = GridType.Target;
+    }
+
     void Start() {
         GameController.Instance.OnTick += Tick;
         GameController.Instance.OnTick2 += Tick2;
 
-        gridObject = GetComponent<GridObject>();
         GameController.Instance.SetValidSpace(gridObject.Location);
 
         var sr = GetComponent<SpriteRenderer>();
