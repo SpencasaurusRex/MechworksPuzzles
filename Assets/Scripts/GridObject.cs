@@ -18,11 +18,9 @@ public class GridObject : MonoBehaviour {
     public GridType Type;
     public GridObject[] Connected;
 
-    public Group Group = new Group();
-
     void Awake() {
         Connected = new GridObject[4];
-        Location = transform.position.xyz().RoundToInt();
+        Location = transform.position.RoundToInt();
         transform.position = transform.position.RoundToInt().ToFloat();
         GameController.Instance.SetGridObject(this);
     }
@@ -39,6 +37,10 @@ public class GridObject : MonoBehaviour {
         if (go != null) {
             Connected[s] = go;
             OnConnect?.Invoke(side, Connected[s]);
+            int os = (s + 2) % 4;
+            if (go.Connected[os] == null) {
+                go.ConnectSide((Side)os);
+            }
         }
     }
 

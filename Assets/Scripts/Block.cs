@@ -56,16 +56,10 @@ public class Block : MonoBehaviour {
         count = 1;
         for (int i = 0; i < 4; i++) {
             int j = (i + 1) % 4;
-            if (name.Contains("(7)")) {
-                print($"Checking {i}, {j}, and {i}->{j}");
-            }
             if (gridObject.Connected[i] != null && 
                 gridObject.Connected[i].Connected[j] != null && 
                 gridObject.Connected[j] != null) {
                 cornerIndex += count;
-                if (name.Contains("(7)")) {
-                    print("True! " + cornerIndex);
-                }
             }
             count *= 2;
         }

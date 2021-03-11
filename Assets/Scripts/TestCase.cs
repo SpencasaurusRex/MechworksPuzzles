@@ -48,7 +48,7 @@ public class TestCase : MonoBehaviour
 
             expectation.Objects = new GridObject[testCase.childCount];
             expectation.TargetLocations = new Vector3Int[testCase.childCount];
-            var delta = new Vector3Int(expectation.Dx, expectation.Dy, expectation.Dy);
+            var delta = new Vector3Int(expectation.Dx, expectation.Dy, expectation.Dz);
             for (int j = 0; j < testCase.childCount; j++) {
                 var go = testCase.GetChild(j).GetComponent<GridObject>();
                 expectation.Objects[j] = go;
@@ -68,9 +68,10 @@ public class TestCase : MonoBehaviour
 
             bool first = true;
             for (int j = 0; j < expectation.Objects.Length; j++) {
-                if (expectation.Objects[j].Location != expectation.TargetLocations[j] ) {
+                var go = expectation.Objects[j]; 
+                if (go.Location != expectation.TargetLocations[j] ) {
                     if (first) print($"{name} failed:");
-                    print($"{expectation.Objects[j].name} {expectation.TargetLocations[j]}");
+                    print($"{go.name} expected {expectation.TargetLocations[j]} got {go.Location}");
                     first = false;
                 }
             }

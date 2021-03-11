@@ -30,13 +30,12 @@ public class Welder : MonoBehaviour
         var go = GameController.Instance.GetGridObject(objectPos);
         
         if (go != null) {
-            // TODO: Type system?
-            if (go.GetComponent<Block>() == null) return;
+            if (go.Type != GridType.Block) return;
             for (int i = 0; i < 4; i++) {
                 if (connectedWelders[i] == null) continue;
                 Vector3Int delta = SideUtil.ToVector((Side)i);
                 var otherGo = GameController.Instance.GetGridObject(objectPos + delta);
-                if (otherGo != null && otherGo.GetComponent<Block>() != null) {
+                if (otherGo != null && otherGo.Type == GridType.Block) {
                     go.ConnectSide((Side)i);
                 }
             }

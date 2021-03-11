@@ -49,7 +49,8 @@ public class GameController : MonoBehaviour
     }
 
     HashSet<Vector3Int> validSpaces = new HashSet<Vector3Int>();
-    Dictionary<Vector3Int, GridObject> GridObjects = new Dictionary<Vector3Int, GridObject>();
+    Dictionary<Vector3Int, GridObject> gridObjects = new Dictionary<Vector3Int, GridObject>();
+    Dictionary<GridObject, Group> groups = new Dictionary<GridObject, Group>();
 
     List<Move> RequestedMoves = new List<Move>();
 
@@ -62,15 +63,15 @@ public class GameController : MonoBehaviour
     }
 
     public void SetGridObject(GridObject obj) {
-        GridObjects.Add(obj.Location, obj);
+        gridObjects.Add(obj.Location, obj);
     }
 
     public void RemoveGridObject(Vector3Int location) {
-        GridObjects.Remove(location);
+        gridObjects.Remove(location);
     }
     public GridObject GetGridObject(Vector3Int position) {
-        if (GridObjects.ContainsKey(position)) {
-            return GridObjects[position];
+        if (gridObjects.ContainsKey(position)) {
+            return gridObjects[position];
         }
         return null;
     }
@@ -79,18 +80,24 @@ public class GameController : MonoBehaviour
         return validSpaces.Contains(location.GroundLayer());
     }
 
-    List<GridObject> Connected(GridObject block) {
-        // TODO: cache this?
+    Group Connected(GridObject block) {
+        if (groups.ContainsKey(block)){
+            return groups[block];
+        }
+
         List<GridObject> gos = new List<GridObject>();
         HashSet<GridObject> counted = new HashSet<GridObject>();
         Queue<GridObject> toProcess = new Queue<GridObject>();
+
+        Group group = new Group();
 
         counted.Add(block);
         toProcess.Enqueue(block);
 
         while (toProcess.Count > 0) {
             var gridObject = toProcess.Dequeue();
-            gos.Add(gridObject);
+            groups.Add(gridObject, group);
+            group.Add(gridObject);
             for (int i = 0; i < 4; i++) {
                 var c = gridObject.Connected[i];
                 if (c != null && !counted.Contains(c)) {
@@ -99,37 +106,52 @@ public class GameController : MonoBehaviour
                 }
             }
         }
-        return gos;
+
+        return group;
     }
 
     void HandleRequests() {
         System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+        groups.Clear();
 
         // 1. Propagate moves
         List<Move> propagatedMoves = new List<Move>();
-        foreach (var move in RequestedMoves) {
+        for (int m = 0; m < RequestedMoves.Count; m++) {
+            var move = RequestedMoves[m];
             propagatedMoves.Add(move);     
             var go = GetGridObject(move.To);
             // Pushes
             if (go != null) {
-                var wholeBlock = Connected(go);
-                foreach (var block in wholeBlock) {
-                    var pushMove = new Move(block, block.Location, block.Location + move.Delta);
+                var group = Connected(go);
+                foreach (var block in group.Objects) {
+                    var target = block.Location + move.Delta;
+                    var pushMove = new Move(block, block.Location, target);
                     pushMove.Dependents.Add(move);
                     move.Dependents.Add(pushMove);
                     propagatedMoves.Add(pushMove);
+
+                    var obstacle = GetGridObject(target);
+                    if (obstacle != null && !group.Contains(obstacle) && !RequestedMoves.Contains(pushMove)) {
+                        RequestedMoves.Add(pushMove);
+                    }
                 }
             }
             // Connections
             for (int i = 0; i < 4; i++) {
                 go = move.Object.Connected[i];
                 if (go == null) continue;
-                var wholeBlock = Connected(go);
-                foreach (var block in wholeBlock) {
-                    var dragMove = new Move(block, block.Location, block.Location + move.Delta);
+                var group = Connected(go);
+                foreach (var block in group.Objects) {
+                    var target = block.Location + move.Delta;
+                    var dragMove = new Move(block, block.Location, target);
                     dragMove.Dependents.Add(move);
                     move.Dependents.Add(dragMove);
                     propagatedMoves.Add(dragMove);
+                    
+                    var obstacle = GetGridObject(target);
+                    if (obstacle != null && !group.Contains(obstacle) && !RequestedMoves.Contains(dragMove)) {
+                        RequestedMoves.Add(dragMove);
+                    }
                 }
             }
         }
@@ -219,11 +241,11 @@ public class GameController : MonoBehaviour
         // 5. Perform the moves
         foreach (var move in distinctMoves) {
             if (move.Blocked) continue;
-            GridObjects.Remove(move.From);
+            gridObjects.Remove(move.From);
         }
         foreach (var move in distinctMoves) {
             if (move.Blocked) continue;
-            GridObjects.Add(move.To, move.Object);
+            gridObjects.Add(move.To, move.Object);
             move.Object.Location = move.To;
             StartCoroutine(LerpMove(move));
         }
@@ -232,6 +254,7 @@ public class GameController : MonoBehaviour
         RequestedMoves.Clear();
 
         sw.Stop();
+        // print(sw.ElapsedMilliseconds);
     }
 
     IEnumerator LerpMove(Move move) {
@@ -255,7 +278,7 @@ public class GameController : MonoBehaviour
         //    Gizmos.DrawCube(pos.ToFloat(), Vector3.one * 0.6f);
         //}
 
-        foreach (var pos in GridObjects.Keys)
+        foreach (var pos in gridObjects.Keys)
         {
             if (pos.z == -1) {
                 continue;
