@@ -3,5 +3,6 @@ public enum GridType {
     Block,
     Welder,
     Spawner,
-    Target
+    Target,
+    Wall
 }

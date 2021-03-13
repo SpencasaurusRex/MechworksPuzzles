@@ -111,6 +111,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Pushable: 0
   Location: {x: 0, y: 0, z: 0}
+  Type: 4
   Connected: []
 --- !u!114 &3029164372088378564
 MonoBehaviour:
@@ -127,3 +128,4 @@ MonoBehaviour:
   GoalCount: 0
   GoalColor: 0
   SyncedNeighbors: 00000000
+  Satisfied: 0

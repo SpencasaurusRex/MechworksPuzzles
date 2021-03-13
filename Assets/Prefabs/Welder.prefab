@@ -110,4 +110,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Pushable: 0
   Location: {x: 0, y: 0, z: 0}
+  Type: 2
   Connected: []

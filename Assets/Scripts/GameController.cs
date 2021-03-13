@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
-using System.Linq;
 using TMPro;
 
 public class GameController : MonoBehaviour
@@ -232,7 +231,10 @@ public class GameController : MonoBehaviour
         // 4. Evaluate the moves
         foreach (var move in distinctMoves) {
             if (move.Blocked) continue;
-            if (!IsValidSpace(move.To)) {
+            if (!move.Object.Movable) {
+                move.Block();
+            }
+            else if (!IsValidSpace(move.To)) {
                 move.Block();
             }
         }

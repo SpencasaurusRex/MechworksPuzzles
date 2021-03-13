@@ -4,7 +4,7 @@ using UnityEngine;
 public class GridObject : MonoBehaviour {    
 
     // Configuration
-    public bool Pushable;
+    public bool Movable;
 
     // Runtime
     public Vector3Int Location;

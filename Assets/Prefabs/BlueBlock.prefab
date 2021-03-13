@@ -210,8 +210,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39a9c6cd5e78665499e1c28628b3da17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Pushable: 1
+  Movable: 1
   Location: {x: 0, y: 0, z: 0}
+  Type: 1
   Connected: []
 --- !u!114 &5044604087420950529
 MonoBehaviour:

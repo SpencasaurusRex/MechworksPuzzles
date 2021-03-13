@@ -46,7 +46,7 @@ public class Block : MonoBehaviour {
         int sideIndex = 0;
         int count = 1;
         for (int i = 0; i < 4; i++) {
-            if (gridObject.Connected[i] != null) {
+            if (gridObject.Connected[i] != null && gridObject.Connected[i].Type == GridType.Block) {
                 sideIndex += count;
             }
             count *= 2;
@@ -56,9 +56,12 @@ public class Block : MonoBehaviour {
         count = 1;
         for (int i = 0; i < 4; i++) {
             int j = (i + 1) % 4;
-            if (gridObject.Connected[i] != null && 
-                gridObject.Connected[i].Connected[j] != null && 
-                gridObject.Connected[j] != null) {
+            if (gridObject.Connected[i] != null &&
+                gridObject.Connected[i].Type == GridType.Block &&
+                // gridObject.Connected[i].Connected[j] != null && 
+                // gridObject.Connected[i].Connected[j].Type == GridType.Block && 
+                gridObject.Connected[j] != null &&
+                gridObject.Connected[j].Type == GridType.Block) {
                 cornerIndex += count;
             }
             count *= 2;
