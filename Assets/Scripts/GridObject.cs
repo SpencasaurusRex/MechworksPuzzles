@@ -45,13 +45,22 @@ public class GridObject : MonoBehaviour {
     }
 
     public void DisconnectSide(Side side) {
+        print(gameObject.name + " disconnecting " + side);
         int s = (int)side;
         if (Connected[s] == null) return;
+        var oldConnection = Connected[s];
         Connected[s] = null;
         OnDisconnect?.Invoke(side, Connected[s]);
+        int os = (s + 2) % 4;
+        oldConnection.DisconnectSide((Side)os);
     }
 
     void OnDestroy() {
         GameController.Instance.RemoveGridObject(Location);
+        for (int i = 0; i < 4; i++) {
+            if (Connected[i] != null) {
+                DisconnectSide((Side)i);
+            }
+        }
     }
 }

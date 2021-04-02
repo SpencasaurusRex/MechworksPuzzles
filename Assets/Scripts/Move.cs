@@ -2,8 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-public class Move : IEquatable<Move>
-{
+public class Move : IEquatable<Move> {
     public Vector3Int From;
     public Vector3Int To;
     public GridObject Object;
@@ -31,19 +30,20 @@ public class Move : IEquatable<Move>
         }
     }
 
-    public override bool Equals(object obj)
-    {
+    public override bool Equals(object obj) {
         if (obj is Move) return Equals(obj as Move);
         return false;
     }
 
-    public override int GetHashCode()
-    {
+    public override int GetHashCode() {
         return (From, To, Object).GetHashCode();
     }
 
-    public bool Equals(Move other)
-    {
+    public bool Equals(Move other) {
         return other.From == From && other.To == To && other.Object == Object;
+    }
+
+    public override string ToString() {
+        return $"{Object.name} {From} {Delta}";
     }
 }

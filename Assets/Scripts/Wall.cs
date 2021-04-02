@@ -19,7 +19,7 @@ public class Wall : MonoBehaviour
             index >>= 1;
             var neighborPos = gridObject.Location + SideUtil.ToVector(i);
             var neighbor = GameController.Instance.GetGridObject(neighborPos);
-            if (neighbor != null && neighbor.Type == GridType.Wall) {
+            if (neighbor != null && neighbor.Type == GridType.Wall) { 
                 index += 8;
             }
         }

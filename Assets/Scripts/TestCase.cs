@@ -29,6 +29,7 @@ public class TestCase : MonoBehaviour
                 var match = matchInfo[j];
 
                 int number = Convert.ToInt32(match.Groups[1].Value);
+                
                 string letter = match.Groups[2].Value.ToLower();
                 switch (letter) {
                     case "t":

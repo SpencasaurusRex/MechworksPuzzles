@@ -12,7 +12,7 @@ public class Target : MonoBehaviour
     // Runtime
     GridObject gridObject;
     int currentCount;
-    Target[] neighborTargets = new Target[4];
+    Target[] neighborTargets;
 
     void Awake() {
         gridObject = GetComponent<GridObject>();
@@ -28,6 +28,7 @@ public class Target : MonoBehaviour
         var sr = GetComponent<SpriteRenderer>();
         sr.color = GameController.Instance.Colors[(int)GoalColor];
 
+        neighborTargets = new Target[4];
         for (int i = 0; i < 4; i++) {
             if (SyncedNeighbors[i]) {
                 var neighborPos = gridObject.Location + SideUtil.ToVector((Side)i);

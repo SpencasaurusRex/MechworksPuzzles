@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections;
 using TMPro;
+using System;
 
 public class GameController : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class GameController : MonoBehaviour
     // Configuration
     public float TickLength = 1f;
     public bool Running = true;
+    public bool Logging;
 
     public Color[] Colors = { Color.red, Color.green, Color.blue };
  
@@ -23,6 +25,9 @@ public class GameController : MonoBehaviour
 
     // Runtime
     int tickNumber;
+    float t;
+
+    public float PercentComplete => t;
 
     void Awake() {
         if (instance != null) {
@@ -32,18 +37,32 @@ public class GameController : MonoBehaviour
     }
 
     void Start() {
-        StartCoroutine(TickCoroutine());
+        
     }
 
-    IEnumerator TickCoroutine() {
-        while (Running) {
-            yield return new WaitForSeconds(TickLength);
+    void Update() {
+        if (!Running) return;
+        t = Mathf.Clamp01(t + Time.deltaTime / TickLength);
+
+        foreach (var lerpMove in lerpMoves) {
+            if (lerpMove.Object == null) continue;
+            lerpMove.Object.transform.position = Vector3.Lerp(lerpMove.From, lerpMove.To, t);
+        }
+
+        if (t == 1.0f) {
+            lerpMoves.Clear();
             tickNumber++;
             if (TickerText != null)
                 TickerText.text = $"Ticks: {tickNumber}";
             OnTick?.Invoke();
             OnTick2?.Invoke();
-            HandleRequests();
+            try {
+                HandleRequests();
+            } catch (Exception ex) {
+                Debug.LogError(ex);
+                Running = false;
+            }
+            t = 0;
         }
     }
 
@@ -90,16 +109,19 @@ public class GameController : MonoBehaviour
 
         Group group = new Group();
 
+        print("Starting with " + block.gameObject.name);
         counted.Add(block);
         toProcess.Enqueue(block);
 
         while (toProcess.Count > 0) {
             var gridObject = toProcess.Dequeue();
+            print("Processing " + gridObject.gameObject.name);
             groups.Add(gridObject, group);
             group.Add(gridObject);
             for (int i = 0; i < 4; i++) {
                 var c = gridObject.Connected[i];
                 if (c != null && !counted.Contains(c)) {
+                    print("Adding " + c.gameObject.name + " " + c.Location);
                     counted.Add(c);
                     toProcess.Enqueue(c);
                 }
@@ -113,11 +135,18 @@ public class GameController : MonoBehaviour
         System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
         groups.Clear();
 
+        if (Logging) {
+            print(tickNumber + " RequestedMoves:");
+            foreach (var move in RequestedMoves) {
+                print(move);
+            }
+        }
+
         // 1. Propagate moves
         List<Move> propagatedMoves = new List<Move>();
         for (int m = 0; m < RequestedMoves.Count; m++) {
             var move = RequestedMoves[m];
-            propagatedMoves.Add(move);     
+            propagatedMoves.Add(move);
             var go = GetGridObject(move.To);
             // Pushes
             if (go != null) {
@@ -155,6 +184,12 @@ public class GameController : MonoBehaviour
             }
         }
 
+        // if (Logging) {
+        //     print(tickNumber + " PropagatedMoves:");
+        //     foreach (var move in propagatedMoves) {
+        //         print(move);
+        //     }
+        // }
 
         // 2. Move duplication checks
         Dictionary<Vector3Int, Move> moveStarts = new Dictionary<Vector3Int, Move>();
@@ -216,15 +251,6 @@ public class GameController : MonoBehaviour
             else {
                 move.Block();
             }
-            // Add dependencies to connected blocks
-            for (int i = 0; i < 4; i++) {
-                var connection = move.Object.Connected[i];
-                if (connection == null) continue;
-                var connectionLocation = move.From + SideUtil.ToVector(i);
-                if (!moveStarts.ContainsKey(connectionLocation)) {
-
-                }
-            }
         }
 
 
@@ -239,6 +265,12 @@ public class GameController : MonoBehaviour
             }
         }
 
+        if (Logging) {
+            print(tickNumber + " Distinct moves:");
+            foreach (var move in distinctMoves) {
+                print(move + " - blocked: " + move.Blocked);
+            }
+        }
         
         // 5. Perform the moves
         foreach (var move in distinctMoves) {
@@ -249,7 +281,7 @@ public class GameController : MonoBehaviour
             if (move.Blocked) continue;
             gridObjects.Add(move.To, move.Object);
             move.Object.Location = move.To;
-            StartCoroutine(LerpMove(move));
+            lerpMoves.Add(move);
         }
 
 
@@ -259,19 +291,7 @@ public class GameController : MonoBehaviour
         // print(sw.ElapsedMilliseconds);
     }
 
-    IEnumerator LerpMove(Move move) {
-        float t = 0;
-        while (t < 1 && move.Object != null)
-        {
-            move.Object.transform.position = Vector3.Lerp(move.From, move.To, t);
-            t += Time.deltaTime / TickLength;
-            yield return new WaitForEndOfFrame();
-        }
-
-        if (move.Object != null) {
-            move.Object.transform.position = move.To.ToFloat();
-        }
-    }
+    List<Move> lerpMoves = new List<Move>();
 
     void OnDrawGizmos() {
         //foreach (var pos in validSpaces)
