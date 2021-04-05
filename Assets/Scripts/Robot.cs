@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
-public class Robot : MonoBehaviour
-{
+public class Robot : MonoBehaviour {
     // Configuration
     [TextArea(5,10)]
     public string Code;
@@ -18,8 +17,7 @@ public class Robot : MonoBehaviour
         gridObject.Type = GridType.Robot;
     }
 
-    void Start()
-    {
+    void Start() {
         var controller = FindObjectOfType<GameController>();
         controller.OnTick += Tick;
         ParseCode();
@@ -37,13 +35,6 @@ public class Robot : MonoBehaviour
     void OnDestroy() {
         gridObject.OnConnect -= OnConnect;
         gridObject.OnDisconnect -= OnDisconnect;
-    }
-
-    public bool debug = false;
-
-    void print(string str) {
-        if (debug) 
-            MonoBehaviour.print(str);
     }
 
     void OnConnect(Side side, GridObject obj) {
@@ -69,19 +60,15 @@ public class Robot : MonoBehaviour
                 }
                 argument = words[1];
                 if (argument == "LEFT") {
-                    print("Moving left");
                     gridObject.RequestMove(Vector3Int.left);
                 }
                 else if (argument == "RIGHT") {
-                    print("Moving right");
                     gridObject.RequestMove(Vector3Int.right);
                 }
                 else if (argument == "UP") {
-                    print("Moving up");
                     gridObject.RequestMove(Vector3Int.up);
                 }
                 else if (argument == "DOWN") {
-                    print("Moving down");
                     gridObject.RequestMove(Vector3Int.down);
                 }
                 else {
@@ -97,19 +84,15 @@ public class Robot : MonoBehaviour
                 }
                 argument = words[1];
                 if (argument == "LEFT") {
-                    print("Grabbing left");
                     gridObject.ConnectSide(Side.Left);
                 }
                 else if (argument == "RIGHT") {
-                    print("Grabbing right");
                     gridObject.ConnectSide(Side.Right);
                 }
                 else if (argument == "UP") {
-                    print("Grabbing up");
                     gridObject.ConnectSide(Side.Up);
                 }
                 else if (argument == "DOWN") {
-                    print("Grabbing down");
                     gridObject.ConnectSide(Side.Down);
                 }
                 else {
@@ -125,19 +108,15 @@ public class Robot : MonoBehaviour
                 }
                 argument = words[1];
                 if (argument == "LEFT") {
-                    print("Dropping left");
                     gridObject.DisconnectSide(Side.Left);
                 }
                 else if (argument == "RIGHT") {
-                    print("Dropping right");
                     gridObject.DisconnectSide(Side.Right);
                 }
                 else if (argument == "UP") {
-                    print("Dropping up");
                     gridObject.DisconnectSide(Side.Up);
                 }
                 else if (argument == "DOWN") {
-                    print("Dropping down");
                     gridObject.DisconnectSide(Side.Down);
                 }
                 else {

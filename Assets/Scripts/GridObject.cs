@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[SelectionBase]
 public class GridObject : MonoBehaviour {    
 
     // Configuration
@@ -25,6 +24,10 @@ public class GridObject : MonoBehaviour {
         GameController.Instance.SetGridObject(this);
     }
 
+    void Update() {
+        
+    }
+
     public void RequestMove(Vector3Int delta) {
     	GameController.Instance.RequestMove(new Move(this, Location, Location + delta));
     }
@@ -45,7 +48,6 @@ public class GridObject : MonoBehaviour {
     }
 
     public void DisconnectSide(Side side) {
-        print(gameObject.name + " disconnecting " + side);
         int s = (int)side;
         if (Connected[s] == null) return;
         var oldConnection = Connected[s];

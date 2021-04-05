@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
-public class Target : MonoBehaviour
-{
+public class Target : MonoBehaviour {
     // Configuration
     public int GoalCount;
     public ObjectColor GoalColor;

@@ -40,6 +40,20 @@ public class GameController : MonoBehaviour
         
     }
 
+    void PlayButton() {
+        if (Running) {
+
+        }
+    }
+
+    void FastButton() {
+
+    }
+
+    void RecordButton() {
+
+    }
+
     void Update() {
         if (!Running) return;
         t = Mathf.Clamp01(t + Time.deltaTime / TickLength);
@@ -109,19 +123,16 @@ public class GameController : MonoBehaviour
 
         Group group = new Group();
 
-        print("Starting with " + block.gameObject.name);
         counted.Add(block);
         toProcess.Enqueue(block);
 
         while (toProcess.Count > 0) {
             var gridObject = toProcess.Dequeue();
-            print("Processing " + gridObject.gameObject.name);
             groups.Add(gridObject, group);
             group.Add(gridObject);
             for (int i = 0; i < 4; i++) {
                 var c = gridObject.Connected[i];
                 if (c != null && !counted.Contains(c)) {
-                    print("Adding " + c.gameObject.name + " " + c.Location);
                     counted.Add(c);
                     toProcess.Enqueue(c);
                 }
@@ -183,13 +194,6 @@ public class GameController : MonoBehaviour
                 }
             }
         }
-
-        // if (Logging) {
-        //     print(tickNumber + " PropagatedMoves:");
-        //     foreach (var move in propagatedMoves) {
-        //         print(move);
-        //     }
-        // }
 
         // 2. Move duplication checks
         Dictionary<Vector3Int, Move> moveStarts = new Dictionary<Vector3Int, Move>();
