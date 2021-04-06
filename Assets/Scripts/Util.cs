@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 public static class Util {    
     #region Swizzle
@@ -66,4 +67,45 @@ public static class Util {
 
     public static Vector3Int ObjectLayer(this Vector3Int v) { return new Vector3Int(v.x, v.y, GridLayer.Object); }
     public static Vector3Int GroundLayer(this Vector3Int v) { return new Vector3Int(v.x, v.y, GridLayer.Ground); }
+
+    public static TileInfo ToTileInfo(GridType type) {
+        TileInfo info;
+        switch (type) {
+            case GridType.Ground:
+                info = new GroundTileInfo();
+                break;
+            case GridType.None:
+                info = null;
+                break;
+            case GridType.Robot:
+                info = new RobotTileInfo();
+                break;
+            case GridType.Spawner:
+                info = new SpawnerTileInfo();
+                break;
+            case GridType.Target:
+                info = new TargetTileInfo();
+                break;
+            default: 
+                throw new NotImplementedException($"GridType {type} is not implemented in ToTileInfo");
+        }
+        return info;
+    }
+
+    public static int ToGridLayer(GridType type) {
+        switch (type) {
+            case GridType.Ground:
+                return GridLayer.Ground;
+            case GridType.None:
+                return GridLayer.Object;
+            case GridType.Robot:
+                return GridLayer.Object;
+            case GridType.Spawner:
+                return GridLayer.Ground;
+            case GridType.Target:
+                return GridLayer.Ground;
+            default:
+                throw new NotImplementedException($"GridType {type} is not implemented in ToGridLayer");
+        }
+    } 
 }

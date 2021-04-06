@@ -123,6 +123,36 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &272132818
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 272132819}
+  m_Layer: 0
+  m_Name: Tiles
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &272132819
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 272132818}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1117161771
 GameObject:
   m_ObjectHideFlags: 0
@@ -199,6 +229,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1238535583}
   - component: {fileID: 1238535582}
+  - component: {fileID: 1238535584}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -240,6 +271,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1238535584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238535581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cbcc1a8099e9694891afb6826d24498, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1362983372
 GameObject:
   m_ObjectHideFlags: 0
@@ -537,4 +580,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BlockInfos:
   - {fileID: 11400000, guid: 0eda186b291911b439bc11f49f1f276e, type: 2}
+  - {fileID: 11400000, guid: a30c41d2e72e25246a3077d151570b11, type: 2}
+  - {fileID: 11400000, guid: 2840afc733dd3fb4f9084d75fa5b223f, type: 2}
   BlockInfoPanelPrefab: {fileID: 4898200314374912191, guid: 91f1e1053bf32db4dbe849ce8e552116, type: 3}
+  TilesParent: {fileID: 272132819}
