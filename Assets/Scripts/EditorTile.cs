@@ -4,8 +4,8 @@ public class EditorTile : MonoBehaviour {
 
     public GridType Type;
     public TileInfo Info;
+    public Vector3Int Location;
 
-    Vector3Int Location;
     bool firstDrag = true;
 
     public void OnDrag(Vector2 worldPosition) {
@@ -38,9 +38,15 @@ public class EditorTile : MonoBehaviour {
         GetComponent<SpriteRenderer>().sprite = blockInfo.Sprite;
     }
 
-    public void RightClick() {
-        switch (Type) {
+    public void Setup(TileInfo tileInfo, Vector3Int location) {
+        Type = tileInfo.GetGridType();
+        Info = tileInfo;
+        Location = location;
+        GetComponent<SpriteRenderer>().sprite = GameData.Instance.GridSprites[Type];
+        firstDrag = false;
+    }
 
-        }
+    public void RightClick() {
+        
     }
 }

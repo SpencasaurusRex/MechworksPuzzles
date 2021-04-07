@@ -2,11 +2,7 @@
 
 public class Target : MonoBehaviour {
     // Configuration
-    public int GoalCount;
-    public ObjectColor GoalColor;
-
-    // If neighboring targets are synced
-    public bool[] SyncedNeighbors = new bool[4];
+    public ColorTileInfo Data;
 
     // Runtime
     GridObject gridObject;
@@ -25,13 +21,13 @@ public class Target : MonoBehaviour {
         GameController.Instance.SetValidSpace(gridObject.Location);
 
         var sr = GetComponent<SpriteRenderer>();
-        sr.color = GameController.Instance.Colors[(int)GoalColor];
+        sr.color = GameController.Instance.Colors[(int)Data.Color];
 
         neighborTargets = new Target[4];
         for (int i = 0; i < 4; i++) {
-            if (SyncedNeighbors[i]) {
-                var neighborPos = gridObject.Location + SideUtil.ToVector((Side)i);
-                var neighborGo = GameController.Instance.GetGridObject(neighborPos.GroundLayer());
+            var neighborPos = gridObject.Location + SideUtil.ToVector((Side)i);
+            var neighborGo = GameController.Instance.GetGridObject(neighborPos.GroundLayer());
+            if (neighborGo != null) {
                 neighborTargets[i] = neighborGo.GetComponent<Target>();
             }
         }
@@ -44,7 +40,7 @@ public class Target : MonoBehaviour {
         var go = GameController.Instance.GetGridObject(gridObject.Location.ObjectLayer());
         if (go != null) {
             var box = go.GetComponent<Block>();
-            if (box != null && box.Color == GoalColor) {
+            if (box != null && box.Color == Data.Color) {
                 Satisfied = true;
             }
         }
@@ -53,7 +49,7 @@ public class Target : MonoBehaviour {
     void Tick2() {
         if (!Satisfied) return;
         for (int i = 0; i < 4; i++) {
-            if (SyncedNeighbors[i] && !neighborTargets[i].Satisfied) {
+            if (neighborTargets[i] != null && !neighborTargets[i].Satisfied) {
                 return;
             }
         }

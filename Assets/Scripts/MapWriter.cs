@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 
 public class MapWriter {
@@ -35,11 +34,11 @@ public class MapReader {
             info.VersionMajor = reader.ReadByte();
             info.VersionMinor = reader.ReadByte();
 
-            info.Width = reader.ReadByte();
-            info.Height = reader.ReadByte();
+            info.Width = reader.ReadInt16();
+            info.Height = reader.ReadInt16();
 
-            info.StartingX = reader.ReadByte();
-            info.StartingY = reader.ReadByte();
+            info.StartingX = reader.ReadInt16();
+            info.StartingY = reader.ReadInt16();
 
             const int numberOfLayers = 2;
             int numberOfTiles = info.Width * info.Height * numberOfLayers;
@@ -61,7 +60,7 @@ public class MapReader {
 
     public TileInfo ReadTile(BinaryReader reader) {
         GridType type = (GridType)reader.ReadByte();
-        byte size = reader.ReadByte();
+        short size = reader.ReadInt16();
         byte[] data = reader.ReadBytes(size);
 
         TileInfo info = Util.ToTileInfo(type);

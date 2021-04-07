@@ -1,3 +1,5 @@
+using System.Text;
+
 public class MapInfo {
     public byte VersionMajor;
     public byte VersionMinor;
@@ -20,7 +22,7 @@ public class MapInfo {
 
 public interface TileInfo {
     GridType GetGridType();
-    byte GetDataSize();
+    short GetDataSize();
     byte[] GetData();
     void Deserialize(byte[] data);
 }
@@ -36,7 +38,7 @@ public class BasicTileInfo : TileInfo {
         return type;
     }
 
-    public byte GetDataSize() {
+    public short GetDataSize() {
         return 0;
     }
 
@@ -52,36 +54,35 @@ public class BasicTileInfo : TileInfo {
 
 public class GroundTileInfo : BasicTileInfo { public GroundTileInfo() : base(GridType.Ground) {} }
 public class NoneTileInfo   : BasicTileInfo { public NoneTileInfo  () : base(GridType.None  ) {} }
-public class RobotTileInfo  : BasicTileInfo { public RobotTileInfo () : base(GridType.Robot ) {} }
 
 // Color tiles
 public class ColorTileInfo : TileInfo {
-    GridType type;
-    ObjectColor color;
+    public GridType Type;
+    public ObjectColor Color;
     
     public ColorTileInfo(GridType type) {
-        this.type = type;
+        this.Type = type;
     }
 
     public ColorTileInfo(GridType type, ObjectColor color) : this(type) {
-        this.color = color;
+        this.Color = color;
     }
 
     public GridType GetGridType() {
-        return type;
+        return Type;
     }
 
-    public byte GetDataSize() {
+    public short GetDataSize() {
         return 1;
     }
 
     public byte[] GetData() {
-        return new byte[] { (byte)color };
+        return new byte[] { (byte)Color };
     }
 
     public void Deserialize(byte[] data) {
         System.Diagnostics.Debug.Assert(data.Length == 1);
-        color = (ObjectColor)data[0];
+        Color = (ObjectColor)data[0];
     }
 }
 
@@ -92,4 +93,24 @@ public class SpawnerTileInfo : ColorTileInfo {
 public class TargetTileInfo  : ColorTileInfo { 
     public TargetTileInfo() : base(GridType.Target) {}
     public TargetTileInfo (ObjectColor color) : base(GridType.Target, color) {} 
+}
+
+// Robot tiles
+public class RobotTileInfo : TileInfo {
+    public string Code;
+    public void Deserialize(byte[] data) {
+        Code = Encoding.ASCII.GetString(data);
+    }
+
+    public byte[] GetData() {
+        return Encoding.ASCII.GetBytes(Code);
+    }
+
+    public short GetDataSize() {
+        return (short)Encoding.UTF8.GetBytes(Code).Length;
+    }
+
+    public GridType GetGridType() {
+        return GridType.Robot;
+    }
 }
