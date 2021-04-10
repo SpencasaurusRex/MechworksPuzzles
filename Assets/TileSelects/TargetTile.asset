@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61a8ff92c166a744c8c8d233821f7eeb, type: 3}
-  m_Name: TargetInfo
+  m_Script: {fileID: 11500000, guid: dee86d2d96b387a4dbc4fd4375094c61, type: 3}
+  m_Name: TargetTile
   m_EditorClassIdentifier: 
   Sprite: {fileID: 21300000, guid: 5087f3876aa887944ad44aeac76fa1bf, type: 3}
   Type: 6

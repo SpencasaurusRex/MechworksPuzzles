@@ -56,6 +56,12 @@ public static class Util {
     public static Vector3 zzz (this Vector3 v) { return new Vector3(v.z, v.z, v.z); }
     #endregion Swizzle
 
+    public static Vector3 WithZ(this Vector2 v, float z) { return new Vector3(v.x, v.y, z); }
+    public static Vector3Int WithZ(this Vector2Int v, int z) { return new Vector3Int(v.x, v.y, z); }
+    
+    public static Vector3 WithZ(this Vector3 v, float z) { return new Vector3(v.x, v.y, z); }
+    public static Vector3Int WithZ(this Vector3Int v, int z) { return new Vector3Int(v.x, v.y, z); }
+    
     public static Vector3Int ToInt(this Vector3 v) { return new Vector3Int((int)v.x, (int)v.y, (int)v.z); }
     public static Vector2Int ToInt(this Vector2 v) { return new Vector2Int((int)v.x, (int)v.y); }
 
@@ -68,8 +74,8 @@ public static class Util {
     public static Vector3Int ObjectLayer(this Vector3Int v) { return new Vector3Int(v.x, v.y, GridLayer.Object); }
     public static Vector3Int GroundLayer(this Vector3Int v) { return new Vector3Int(v.x, v.y, GridLayer.Ground); }
 
-    public static TileInfo ToTileInfo(GridType type) {
-        TileInfo info;
+    public static TileData ToTileInfo(GridType type) {
+        TileData info;
         switch (type) {
             case GridType.Ground:
                 info = new GroundTileInfo();
@@ -85,6 +91,15 @@ public static class Util {
                 break;
             case GridType.Target:
                 info = new TargetTileInfo();
+                break;
+            case GridType.Welder:
+                info = new WelderTileInfo();
+                break;
+            case GridType.Wall:
+                info = new WallTileInfo();
+                break;
+            case GridType.Block:
+                info = new BlockTileInfo();
                 break;
             default: 
                 throw new NotImplementedException($"GridType {type} is not implemented in ToTileInfo");

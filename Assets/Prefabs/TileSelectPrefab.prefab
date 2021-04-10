@@ -86,9 +86,9 @@ GameObject:
   - component: {fileID: 4898200314374912191}
   - component: {fileID: 4898200314374912189}
   - component: {fileID: 4898200314374912188}
-  - component: {fileID: 138408178677261769}
+  - component: {fileID: 9137006285864768428}
   m_Layer: 5
-  m_Name: BlockInfoPanel
+  m_Name: TileSelectPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -135,7 +135,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -152,7 +152,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &138408178677261769
+--- !u!114 &9137006285864768428
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -161,7 +161,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 4898200314374912190}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec4b8a23987b8224595963fea3507846, type: 3}
+  m_Script: {fileID: 11500000, guid: 19f9201dbd90a2f43ae5eb794ba2ee85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EditorTilePrefab: {fileID: 3897045108746385596, guid: f25311216bf29ea4a9a73785433e7e32, type: 3}
+  DefaultColor: {r: 0, g: 0, b: 0, a: 0}
+  SelectedColor: {r: 0.6264151, g: 0.7799901, b: 1, a: 0.7882353}

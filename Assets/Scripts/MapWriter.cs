@@ -20,7 +20,7 @@ public class MapWriter {
         }
     }
 
-    public void WriteTile(BinaryWriter writer, TileInfo tile) {
+    public void WriteTile(BinaryWriter writer, TileData tile) {
         writer.Write((byte)tile.GetGridType());
         writer.Write(tile.GetDataSize());
         writer.Write(tile.GetData());
@@ -43,7 +43,7 @@ public class MapReader {
             const int numberOfLayers = 2;
             int numberOfTiles = info.Width * info.Height * numberOfLayers;
 
-            info.Tiles = new TileInfo[numberOfTiles];
+            info.Tiles = new TileData[numberOfTiles];
 
             int tileIndex = 0;
             for (int layer = GridLayer.Ground; layer <= GridLayer.Object; layer++) {
@@ -58,12 +58,12 @@ public class MapReader {
         return info;
     }
 
-    public TileInfo ReadTile(BinaryReader reader) {
+    public TileData ReadTile(BinaryReader reader) {
         GridType type = (GridType)reader.ReadByte();
         short size = reader.ReadInt16();
         byte[] data = reader.ReadBytes(size);
 
-        TileInfo info = Util.ToTileInfo(type);
+        TileData info = Util.ToTileInfo(type);
 
         if (info != null) {
             info.Deserialize(data);

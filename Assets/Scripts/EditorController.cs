@@ -6,56 +6,25 @@ public class EditorController : MonoBehaviour {
     // Configuration
     public EditorTile EditorTilePrefab;
     public Transform TilesParent;
+    public UnityEngine.UI.Image GroundLayerVisibilityButton;
+    public UnityEngine.UI.Image ObjectLayerVisibilityButton;
+    // 0 - Object vis
+    // 1 - Object not vis
+    // 2 - Ground Vis
+    // 3 - Ground not vis
+    public Sprite[] VisibilityButtonSprites;
 
     public bool Debug;
 
     // Runtime
     public static EditorController Instance {get; set;}
     
-    Vector2 MouseWorldPosition => Camera.main.ScreenToWorldPoint(Input.mousePosition).xy();
+    TileSelect SelectedBrush;
     Dictionary<Vector3Int, EditorTile> Tiles = new Dictionary<Vector3Int, EditorTile>();
 
     void Awake() {
         if (Instance != null) Destroy(this);
         else Instance = this;
-    }
-
-    bool currentlyDragging = false;
-    EditorTile dragging;
-
-    const int LEFT = 0;
-    const int RIGHT = 1;
-
-    void Update() {
-
-        if (Input.GetMouseButtonDown(LEFT)) {
-            RaycastHit2D[] hits = Physics2D.RaycastAll(MouseWorldPosition, Vector2.zero);
-            if (hits.Length > 0) {
-                var tile = hits[0].transform.GetComponent<EditorTile>();
-                if (tile != null) {
-                    dragging = tile;
-                    currentlyDragging = true;
-                }
-            }
-        }
-        else if (currentlyDragging && Input.GetMouseButton(LEFT)) {
-            dragging.OnDrag(MouseWorldPosition);
-        }
-        else if (currentlyDragging && !Input.GetMouseButton(LEFT)) {
-            dragging.EndDrag(MouseWorldPosition);
-            dragging = null;
-            currentlyDragging = false;
-        }
-
-        if (Input.GetMouseButtonDown(RIGHT)) {
-            RaycastHit2D[] hits = Physics2D.RaycastAll(MouseWorldPosition, Vector2.zero);
-            if (hits.Length > 0) {
-                var tile = hits[0].transform.GetComponent<EditorTile>();
-                if (tile != null) {
-                    tile.RightClick();
-                }
-            }
-        }
     }
 
     public void Serialize() {
@@ -94,7 +63,7 @@ public class EditorController : MonoBehaviour {
             // Loop through tiles
             const int numberOfLayers = 2;
             int numberOfTiles = numberOfLayers * info.Width * info.Height;
-            info.Tiles = new TileInfo[numberOfTiles];
+            info.Tiles = new TileData[numberOfTiles];
             int tileIndex = 0;
             for (int layer = GridLayer.Ground; layer <= GridLayer.Object; layer++) {
                 for (int y = info.StartingY; y < info.StartingY + info.Height; y++) {
@@ -111,7 +80,6 @@ public class EditorController : MonoBehaviour {
                 }
             }
 
-            
             // Extra data
             info.ExtraData = new byte[0];
             info.ExtraDataLength = 0;
@@ -141,7 +109,7 @@ public class EditorController : MonoBehaviour {
         for (int layer = GridLayer.Ground; layer <= GridLayer.Object; layer++) {
             for (int y = info.StartingY; y < info.StartingY + info.Height; y++) {
                 for (int x = info.StartingX; x < info.StartingX + info.Width; x++) {
-                    TileInfo tileInfo = info.Tiles[tileIndex++];
+                    TileData tileInfo = info.Tiles[tileIndex++];
                     if (tileInfo != null) CreateEditorTile(tileInfo, x, y, layer);
                 }
             }
@@ -149,7 +117,7 @@ public class EditorController : MonoBehaviour {
 
     }
 
-    public void CreateEditorTile(TileInfo info, int x, int y, int layer) {
+    public void CreateEditorTile(TileData info, int x, int y, int layer) {
         var editorTile = Instantiate(EditorTilePrefab, new Vector3(x, y, layer), Quaternion.identity, TilesParent);
         var position = new Vector3Int(x, y, layer);
         editorTile.Setup(info, position);
@@ -173,6 +141,34 @@ public class EditorController : MonoBehaviour {
         if (Tiles.ContainsKey(position))
             Tiles.Remove(position);
     }
+
+    bool groundLayerVisible = true;
+    bool objectLayerVisible = true;
+
+    public void ClickGroundLayer() {
+        groundLayerVisible = !groundLayerVisible;
+        UpdateVisibility();
+        GroundLayerVisibilityButton.sprite = VisibilityButtonSprites[groundLayerVisible ? 2 : 3];
+    }
+
+    public void ClickObjectLayer() {
+        objectLayerVisible = !objectLayerVisible;
+        UpdateVisibility();
+        ObjectLayerVisibilityButton.sprite = VisibilityButtonSprites[objectLayerVisible ? 0 : 1];
+    }
+
+    void UpdateVisibility() {
+        foreach (var tile in Tiles.Values) {
+            if (tile.Location.z == GridLayer.Ground) {
+                tile.SetVisible(groundLayerVisible);
+            }
+            else if (tile.Location.z == GridLayer.Object) {
+                tile.SetVisible(objectLayerVisible);
+            }
+        }
+    }
+
+
 
     void OnDrawGizmos() {
         if (Debug) {

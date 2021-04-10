@@ -10,7 +10,7 @@ public class MapInfo {
     public short StartingX;
     public short StartingY;
 
-    public TileInfo[] Tiles;
+    public TileData[] Tiles;
 
     public int ExtraDataLength;
     public byte[] ExtraData;
@@ -20,7 +20,7 @@ public class MapInfo {
     // TODO
 }
 
-public interface TileInfo {
+public interface TileData {
     GridType GetGridType();
     short GetDataSize();
     byte[] GetData();
@@ -28,7 +28,7 @@ public interface TileInfo {
 }
 
 // Basic Tiles
-public class BasicTileInfo : TileInfo {
+public class BasicTileInfo : TileData {
     GridType type;
     public BasicTileInfo(GridType type) {
         this.type = type;
@@ -54,9 +54,11 @@ public class BasicTileInfo : TileInfo {
 
 public class GroundTileInfo : BasicTileInfo { public GroundTileInfo() : base(GridType.Ground) {} }
 public class NoneTileInfo   : BasicTileInfo { public NoneTileInfo  () : base(GridType.None  ) {} }
+public class WelderTileInfo : BasicTileInfo { public WelderTileInfo() : base(GridType.Welder) {} }
+public class WallTileInfo   : BasicTileInfo { public WallTileInfo  () : base(GridType.Wall  ) {} }
 
 // Color tiles
-public class ColorTileInfo : TileInfo {
+public class ColorTileInfo : TileData {
     public GridType Type;
     public ObjectColor Color;
     
@@ -91,12 +93,16 @@ public class SpawnerTileInfo : ColorTileInfo {
     public SpawnerTileInfo(ObjectColor color) : base(GridType.Spawner, color) {} 
 }
 public class TargetTileInfo  : ColorTileInfo { 
-    public TargetTileInfo() : base(GridType.Target) {}
+    public TargetTileInfo () : base(GridType.Target) {}
     public TargetTileInfo (ObjectColor color) : base(GridType.Target, color) {} 
+}
+public class BlockTileInfo   : ColorTileInfo {
+    public BlockTileInfo ()  : base(GridType.Block) {}
+    public BlockTileInfo (ObjectColor color) : base(GridType.Block, color) {}
 }
 
 // Robot tiles
-public class RobotTileInfo : TileInfo {
+public class RobotTileInfo : TileData {
     public string Code;
     public void Deserialize(byte[] data) {
         Code = Encoding.ASCII.GetString(data);
@@ -107,6 +113,7 @@ public class RobotTileInfo : TileInfo {
     }
 
     public short GetDataSize() {
+        if (Code == null) Code = "";
         return (short)Encoding.UTF8.GetBytes(Code).Length;
     }
 

@@ -3,47 +3,34 @@ using UnityEngine;
 public class EditorTile : MonoBehaviour {
 
     public GridType Type;
-    public TileInfo Info;
+    public TileData Info;
     public Vector3Int Location;
+    public SpriteRenderer sr;
 
-    bool firstDrag = true;
-
-    public void OnDrag(Vector2 worldPosition) {
-        transform.position = worldPosition.xy().RoundToInt().ToFloat();
-    }
-
-    public void EndDrag(Vector2 worldPosition) {
-        // Check if that position is valid
-        Vector3Int newLocation = worldPosition.xyx().RoundToInt();
-        newLocation.z = Util.ToGridLayer(Type);
-
-        if (EditorController.Instance.GetTile(newLocation) != null) {
-            if (firstDrag) {
-                Destroy(this.gameObject);
-            }
-            transform.position = Location.ToFloat();
-        }
-        else {
-            if (!firstDrag) EditorController.Instance.RemoveTile(Location);
-            Location = newLocation;
-            EditorController.Instance.AddTile(Location, this);
-        }
-        
-        firstDrag = false;
-    }
-
-    public void Setup(BlockInfo blockInfo) {
-        Type = blockInfo.Type;
+    public void Setup(TileSelectInfo tileSelectInfo, Vector3Int location) {
+        Type = tileSelectInfo.Type;
         Info = Util.ToTileInfo(Type);
-        GetComponent<SpriteRenderer>().sprite = blockInfo.Sprite;
+        Location = location;
+        var sr = GetComponent<SpriteRenderer>();
+        sr.sprite = tileSelectInfo.Sprite;
+        sr.sortingOrder = Location.z;
     }
 
-    public void Setup(TileInfo tileInfo, Vector3Int location) {
+    public void Setup(TileData tileInfo, Vector3Int location) {
         Type = tileInfo.GetGridType();
         Info = tileInfo;
         Location = location;
-        GetComponent<SpriteRenderer>().sprite = GameData.Instance.GridSprites[Type];
-        firstDrag = false;
+        var sr = GetComponent<SpriteRenderer>();
+        sr.sprite = GameData.Instance.GridSprites[Type];
+        sr.sortingOrder = Location.z;
+    }
+
+    void Start() {
+        sr = GetComponent<SpriteRenderer>();
+    }
+
+    public void SetVisible(bool visible) {
+        sr.enabled = visible;
     }
 
     public void RightClick() {
