@@ -21,7 +21,7 @@ public class Target : MonoBehaviour {
         GameController.Instance.SetValidSpace(gridObject.Location);
 
         var sr = GetComponent<SpriteRenderer>();
-        sr.color = GameController.Instance.Colors[(int)Data.Color];
+        sr.color = GameData.Instance.Colors[(int)Data.Color];
 
         neighborTargets = new Target[4];
         for (int i = 0; i < 4; i++) {

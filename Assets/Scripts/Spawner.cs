@@ -21,7 +21,7 @@ public class Spawner : MonoBehaviour {
         Create();
 
         var sr = GetComponent<SpriteRenderer>();
-        sr.color = GameController.Instance.Colors[(int)Color];
+        sr.color = GameData.Instance.Colors[(int)Color];
     }
 
     void Tick() {

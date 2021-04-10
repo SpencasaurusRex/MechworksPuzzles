@@ -8,13 +8,11 @@ public class TileSelectPanel : MonoBehaviour
     public TileSelect TileSelectPrefab;
     public Transform TilesParent;
     public EditorTile EditorTilePrefab;
-    public Transform HighlightRect;
 
     // Runtime
     TileSelect selectedTile;
-    Vector3 MouseWorldPosition => Camera.main.ScreenToWorldPoint(Input.mousePosition);
     Vector3 LastMouseWorldPosition;
-    Vector3Int MouseTilePosition => MouseWorldPosition.RoundToInt();
+
 
     void Start() {
         var groundGroup = transform.Find("GroundLayerGroup");
@@ -28,12 +26,12 @@ public class TileSelectPanel : MonoBehaviour
             if (selectedTile == null) SelectTile(tileSelect);
         }
 
-        LastMouseWorldPosition = MouseWorldPosition;
+        LastMouseWorldPosition = Util.MouseWorldPosition(Camera.main);
     }
 
     void Update() {
         if (Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject()) {
-            var pos = MouseTilePosition;
+            var pos = Util.MouseTilePosition(Camera.main);
             pos.z = selectedTile.info.Layer;
             var existingTile = EditorController.Instance.GetTile(pos);
             if (existingTile) {
@@ -44,11 +42,13 @@ public class TileSelectPanel : MonoBehaviour
                 var newTile = Instantiate(EditorTilePrefab, pos, Quaternion.identity, TilesParent);
                 newTile.Setup(selectedTile.info, pos);
                 EditorController.Instance.AddTile(pos, newTile);
+                if (selectedTile.info.Layer == GridLayer.Ground) EditorController.Instance.SetGroundLayerVisible(true);
+                if (selectedTile.info.Layer == GridLayer.Object) EditorController.Instance.SetObjectLayerVisible(true);
             }
         }
 
         if (Input.GetMouseButton(1) && !EventSystem.current.IsPointerOverGameObject()) {
-            var pos = MouseTilePosition.WithZ(selectedTile.info.Layer);
+            var pos = Util.MouseTilePosition(Camera.main).WithZ(selectedTile.info.Layer);
             var tile = EditorController.Instance.GetTile(pos);
             if (tile != null) {
                 EditorController.Instance.RemoveTile(pos);
@@ -57,15 +57,10 @@ public class TileSelectPanel : MonoBehaviour
         }
 
         if (Input.GetMouseButton(2)) {
-            Camera.main.transform.position += (LastMouseWorldPosition - MouseWorldPosition);
+            Camera.main.transform.position += (LastMouseWorldPosition - Util.MouseWorldPosition(Camera.main));
         }
 
-        //if (!EventSystem.current.IsPointerOverGameObject()) 
-        {
-            HighlightRect.position = Vector3.Lerp(HighlightRect.position, MouseTilePosition.WithZ(5), 0.4f);
-        }
-
-        LastMouseWorldPosition = MouseWorldPosition;
+        LastMouseWorldPosition = Util.MouseWorldPosition(Camera.main);
     }
 
     public void SelectTile(TileSelect tile) {
@@ -73,6 +68,12 @@ public class TileSelectPanel : MonoBehaviour
             selectedTile.SetSelected(false);
         }
         selectedTile = tile;
-        selectedTile.SetSelected(true);
+        selectedTile.SetSelected(true); 
+        if (selectedTile.info.Layer == GridLayer.Ground) {
+            EditorController.Instance.SetGroundLayerVisible(true);
+        }
+        else if (selectedTile.info.Layer == GridLayer.Object) {
+            EditorController.Instance.SetObjectLayerVisible(true);
+        }
     }
 }

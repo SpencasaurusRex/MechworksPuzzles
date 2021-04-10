@@ -74,6 +74,9 @@ public static class Util {
     public static Vector3Int ObjectLayer(this Vector3Int v) { return new Vector3Int(v.x, v.y, GridLayer.Object); }
     public static Vector3Int GroundLayer(this Vector3Int v) { return new Vector3Int(v.x, v.y, GridLayer.Ground); }
 
+    public static Vector3 MouseWorldPosition(Camera cam) => cam.ScreenToWorldPoint(Input.mousePosition).WithZ(0);
+    public static Vector3Int MouseTilePosition(Camera cam) => MouseWorldPosition(cam).RoundToInt();
+
     public static TileData ToTileInfo(GridType type) {
         TileData info;
         switch (type) {

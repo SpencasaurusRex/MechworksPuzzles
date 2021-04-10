@@ -21,9 +21,9 @@ public class Block : MonoBehaviour {
 
     void Start() {
         sideSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
-        sideSprite.color = GameController.Instance.Colors[(int)Color];    
+        sideSprite.color = GameData.Instance.Colors[(int)Color];    
         cornerSprite = transform.GetChild(1).GetComponent<SpriteRenderer>();
-        cornerSprite.color = GameController.Instance.Colors[(int)Color];    
+        cornerSprite.color = GameData.Instance.Colors[(int)Color];    
         
         gridObject.OnConnect += OnConnect;
         gridObject.OnDisconnect += OnDisconnect;

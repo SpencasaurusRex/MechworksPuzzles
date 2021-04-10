@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Collections;
 using TMPro;
 using System;
 
@@ -17,8 +16,6 @@ public class GameController : MonoBehaviour
     public float TickLength = 1f;
     public bool Running = true;
     public bool Logging;
-
-    public Color[] Colors = { Color.red, Color.green, Color.blue };
  
     // References
     public TextMeshProUGUI TickerText;

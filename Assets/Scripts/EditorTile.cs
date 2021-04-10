@@ -3,13 +3,13 @@ using UnityEngine;
 public class EditorTile : MonoBehaviour {
 
     public GridType Type;
-    public TileData Info;
+    public TileData Data;
     public Vector3Int Location;
     public SpriteRenderer sr;
 
     public void Setup(TileSelectInfo tileSelectInfo, Vector3Int location) {
         Type = tileSelectInfo.Type;
-        Info = Util.ToTileInfo(Type);
+        Data = Util.ToTileInfo(Type);
         Location = location;
         var sr = GetComponent<SpriteRenderer>();
         sr.sprite = tileSelectInfo.Sprite;
@@ -18,11 +18,20 @@ public class EditorTile : MonoBehaviour {
 
     public void Setup(TileData tileInfo, Vector3Int location) {
         Type = tileInfo.GetGridType();
-        Info = tileInfo;
+        Data = tileInfo;
         Location = location;
         var sr = GetComponent<SpriteRenderer>();
         sr.sprite = GameData.Instance.GridSprites[Type];
         sr.sortingOrder = Location.z;
+
+        switch (Type) {
+            case GridType.Block:
+            case GridType.Spawner:
+            case GridType.Target:
+                var colorData = tileInfo as ColorTileInfo;
+                sr.color = GameData.Instance.Colors[(int)colorData.Color];
+                break;
+        }
     }
 
     void Start() {
@@ -31,9 +40,5 @@ public class EditorTile : MonoBehaviour {
 
     public void SetVisible(bool visible) {
         sr.enabled = visible;
-    }
-
-    public void RightClick() {
-        
     }
 }

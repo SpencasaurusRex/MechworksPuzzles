@@ -8,11 +8,11 @@ public class EditorController : MonoBehaviour {
     public Transform TilesParent;
     public UnityEngine.UI.Image GroundLayerVisibilityButton;
     public UnityEngine.UI.Image ObjectLayerVisibilityButton;
-    // 0 - Object vis
-    // 1 - Object not vis
-    // 2 - Ground Vis
-    // 3 - Ground not vis
+
     public Sprite[] VisibilityButtonSprites;
+    public GameObject TilesPanel;
+    public GameObject PropertiesPanel;
+    public Transform HighlightRect;
 
     public bool Debug;
 
@@ -25,6 +25,10 @@ public class EditorController : MonoBehaviour {
     void Awake() {
         if (Instance != null) Destroy(this);
         else Instance = this;
+    }
+
+    void Update() {
+        HighlightRect.position = Vector3.Lerp(HighlightRect.position, Util.MouseTilePosition(Camera.main).WithZ(5), 0.4f);
     }
 
     public void Serialize() {
@@ -70,7 +74,7 @@ public class EditorController : MonoBehaviour {
                     for (int x = info.StartingX; x < info.StartingX + info.Width; x++) {
                         var position = new Vector3Int(x, y, layer);
                         if (Tiles.ContainsKey(position)) {
-                            info.Tiles[tileIndex] = Tiles[position].Info;
+                            info.Tiles[tileIndex] = Tiles[position].Data;
                         }
                         else {
                             info.Tiles[tileIndex] = new NoneTileInfo();
@@ -102,8 +106,6 @@ public class EditorController : MonoBehaviour {
 
         MapReader reader = new MapReader();
         MapInfo info = reader.ReadMap(@"C:\Projects\MechworksPuzzles\Assets\Maps\testmap.mpm");
-        
-        print($"Read map with {info.Width} {info.Height} {info.StartingX} {info.StartingY}");
 
         int tileIndex = 0;
         for (int layer = GridLayer.Ground; layer <= GridLayer.Object; layer++) {
@@ -144,20 +146,39 @@ public class EditorController : MonoBehaviour {
 
     bool groundLayerVisible = true;
     bool objectLayerVisible = true;
+    
+    public bool IsGroundLayerVisible() => groundLayerVisible;
+    public bool IsObjectLayerVisible() => objectLayerVisible;
+
+    public void SetGroundLayerVisible(bool visible) {
+        if (groundLayerVisible != visible) {
+            groundLayerVisible = visible;
+            UpdateVisibility();
+        }
+    }
+
+    public void SetObjectLayerVisible(bool visible) {
+        if (objectLayerVisible != visible) {
+            objectLayerVisible = visible;
+            UpdateVisibility();
+        }
+    }
 
     public void ClickGroundLayer() {
         groundLayerVisible = !groundLayerVisible;
         UpdateVisibility();
-        GroundLayerVisibilityButton.sprite = VisibilityButtonSprites[groundLayerVisible ? 2 : 3];
+        
     }
 
     public void ClickObjectLayer() {
         objectLayerVisible = !objectLayerVisible;
         UpdateVisibility();
-        ObjectLayerVisibilityButton.sprite = VisibilityButtonSprites[objectLayerVisible ? 0 : 1];
+        
     }
 
     void UpdateVisibility() {
+        ObjectLayerVisibilityButton.sprite = VisibilityButtonSprites[objectLayerVisible ? 0 : 1];
+        GroundLayerVisibilityButton.sprite = VisibilityButtonSprites[groundLayerVisible ? 2 : 3];
         foreach (var tile in Tiles.Values) {
             if (tile.Location.z == GridLayer.Ground) {
                 tile.SetVisible(groundLayerVisible);
@@ -168,7 +189,18 @@ public class EditorController : MonoBehaviour {
         }
     }
 
+    public void ClickPropertiesButton() {
+        TilesPanel.SetActive(false);
+        TilesPanel.GetComponent<TileSelectPanel>().enabled = false;
+        PropertiesPanel.SetActive(true);
+        PropertiesPanel.GetComponent<PropertiesPanel>().ShowPanel();
+    }
 
+    public void ClickTilesButton() {
+        TilesPanel.SetActive(true);
+        TilesPanel.GetComponent<TileSelectPanel>().enabled = true;
+        PropertiesPanel.GetComponent<PropertiesPanel>().HidePanel();
+    }
 
     void OnDrawGizmos() {
         if (Debug) {
