@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
-using System.Linq;
 
 public class EditorController : MonoBehaviour {
     // Configuration
@@ -35,69 +34,39 @@ public class EditorController : MonoBehaviour {
     public void Serialize() {
         MapInfo info = new MapInfo();
 
-        if (Tiles.Count > 0) {
-            
-            info.VersionMajor = 0;
-            info.VersionMinor = 1;
-
-            // Get bounding box of tiles
-            int startingX = 0;
-            int startingY = 0;
-            int endingX = 0;
-            int endingY = 0;
-            
-            endingX = startingX = Tiles.First().Key.x;
-            endingY = startingY = Tiles.First().Key.y;
-
-            foreach (var kvp in Tiles) {
-                var location = kvp.Key;
-                var tile = kvp.Value;
-                startingX = Mathf.Min(startingX, location.x);
-                startingY = Mathf.Min(startingY, location.y);
-                endingX = Mathf.Max(endingX, location.x);
-                endingY = Mathf.Max(endingY, location.y);
-            }
-
-            info.StartingX = (short)startingX;
-            info.StartingY = (short)startingY;
-
-            info.Width = (short)(endingX - startingX + 1);
-            info.Height = (short)(endingY - startingY + 1);
-
-
-            // Loop through tiles
-            const int numberOfLayers = 2;
-            int numberOfTiles = numberOfLayers * info.Width * info.Height;
-            info.Tiles = new TileData[numberOfTiles];
-            int tileIndex = 0;
-            for (int layer = GridLayer.Ground; layer <= GridLayer.Object; layer++) {
-                for (int y = info.StartingY; y < info.StartingY + info.Height; y++) {
-                    for (int x = info.StartingX; x < info.StartingX + info.Width; x++) {
-                        var position = new Vector3Int(x, y, layer);
-                        if (Tiles.ContainsKey(position)) {
-                            info.Tiles[tileIndex] = Tiles[position].Data;
-                        }
-                        else {
-                            info.Tiles[tileIndex] = new NoneTileInfo();
-                        }
-                        tileIndex++;
-                    }
-                }
-            }
-
-            // Extra data
-            info.ExtraData = new byte[0];
-            info.ExtraDataLength = 0;
+        // Check for too many tiles
+        if (Tiles.Count > short.MaxValue) {
+            throw new System.Exception("Too many tiles to save this map. Why is your map so big??");
         }
+        
+        info.NumberOfTiles = (short)Tiles.Count;
+        
+        info.VersionMajor = 0;
+        info.VersionMinor = 1;
 
-        MapWriter writer = new MapWriter();
-        writer.WriteMap(info, @"C:\Projects\MechworksPuzzles\Assets\Maps\testmap.mpm");
+        // Loop through tiles
+        info.Tiles = new TileData[Tiles.Count];
+        
+        int tileIndex = 0;
+        foreach (var kvp in Tiles) {
+            var position = kvp.Key;
+            var tile = kvp.Value;
+            info.Tiles[tileIndex] = Tiles[position].Data;
+            info.Tiles[tileIndex++].SetPosition(((short)position.x, (short)position.y, (sbyte)position.z));
+        }
+        
+        // Extra data
+        info.ExtraData = new byte[0];
+        info.ExtraDataLength = 0;
+
+        MapWriter.WriteMap(info, @"C:\Projects\MechworksPuzzles\Assets\Maps\testmap.mpm");
     }
 
     public void Reset() {
         Tiles.Clear();
         int children = TilesParent.childCount;
         for (int i = 0; i < children; i++) {
+            // https://www.youtube.com/watch?v=EQ8jy7jQ3yY
             Destroy(TilesParent.GetChild(i).gameObject);
         }
     }
@@ -105,21 +74,16 @@ public class EditorController : MonoBehaviour {
     public void Deserialize() {
         Reset();
 
-        MapReader reader = new MapReader();
-        MapInfo info = reader.ReadMap(@"C:\Projects\MechworksPuzzles\Assets\Maps\testmap.mpm");
-
-        int tileIndex = 0;
-        for (int layer = GridLayer.Ground; layer <= GridLayer.Object; layer++) {
-            for (int y = info.StartingY; y < info.StartingY + info.Height; y++) {
-                for (int x = info.StartingX; x < info.StartingX + info.Width; x++) {
-                    TileData tileInfo = info.Tiles[tileIndex++];
-                    if (tileInfo != null) CreateEditorTile(tileInfo, x, y, layer);
-                }
-            }
+        MapInfo info = MapReader.ReadMap(@"C:\Projects\MechworksPuzzles\Assets\Maps\testmap.mpm");
+        
+        for (int i = 0; i < info.NumberOfTiles; i++) {
+            TileData tileInfo = info.Tiles[i];
+            CreateEditorTile(tileInfo);
         }
     }
 
-    public void CreateEditorTile(TileData info, int x, int y, int layer) {
+    public void CreateEditorTile(TileData info) {
+        var (x, y, layer) = info.GetPosition();
         var editorTile = Instantiate(EditorTilePrefab, new Vector3(x, y, layer), Quaternion.identity, TilesParent);
         var position = new Vector3Int(x, y, layer);
         editorTile.Setup(info, position);

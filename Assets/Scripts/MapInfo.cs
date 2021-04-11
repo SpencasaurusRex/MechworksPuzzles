@@ -4,20 +4,12 @@ public class MapInfo {
     public byte VersionMajor;
     public byte VersionMinor;
 
-    public short Width;
-    public short Height;
-
-    public short StartingX;
-    public short StartingY;
+    public short NumberOfTiles;
 
     public TileData[] Tiles;
 
     public int ExtraDataLength;
     public byte[] ExtraData;
-
-    // ExtraData Payload
-    
-    // TODO
 }
 
 public struct Version {
@@ -32,6 +24,8 @@ public struct Version {
 
 public interface TileData {
     GridType GetGridType();
+    (short, short, sbyte) GetPosition();
+    void SetPosition((short, short, sbyte) position);
     short GetDataSize(Version v);
     byte[] GetData(Version v);
     void Deserialize(byte[] data, Version v);
@@ -40,12 +34,22 @@ public interface TileData {
 // Basic Tiles
 public class BasicTileInfo : TileData {
     GridType type;
+    public (short, short, sbyte) Position;
+    
     public BasicTileInfo(GridType type) {
         this.type = type;
     }
 
     public GridType GetGridType() {
         return type;
+    }
+
+    public void SetPosition((short, short, sbyte) position) {
+        Position = position;
+    }
+
+    public (short, short, sbyte) GetPosition() {
+        return Position;
     }
 
     public short GetDataSize(Version v) {
@@ -70,7 +74,8 @@ public class WallTileInfo   : BasicTileInfo { public WallTileInfo  () : base(Gri
 public class ColorTileInfo : TileData {
     public GridType Type;
     public ObjectColor Color;
-    
+    public (short, short, sbyte) Position;
+
     public ColorTileInfo(GridType type) {
         this.Type = type;
     }
@@ -81,6 +86,14 @@ public class ColorTileInfo : TileData {
 
     public GridType GetGridType() {
         return Type;
+    }
+
+    public void SetPosition((short, short, sbyte) position) {
+        Position = position;
+    }
+
+    public (short, short, sbyte) GetPosition() {
+        return Position;
     }
 
     public short GetDataSize(Version v) {
@@ -109,9 +122,18 @@ public class BlockTileInfo   : ColorTileInfo {
 // Robot tiles
 public class RobotTileInfo : TileData {
     public string Code;
-    
+    public (short, short, sbyte) Position;
+
     public void Deserialize(byte[] data, Version v) {
         Code = Encoding.ASCII.GetString(data);
+    }
+
+    public void SetPosition((short, short, sbyte) position) {
+        Position = position;
+    }
+
+    public (short, short, sbyte) GetPosition() {
+        return Position;
     }
 
     public byte[] GetData(Version v) {
@@ -126,13 +148,15 @@ public class RobotTileInfo : TileData {
     public GridType GetGridType() {
         return GridType.Robot;
     }
+
 }
 
 // Target tiles
 public class TargetTileInfo : TileData { 
     public ObjectColor Color;
     public byte GoalCount;
-    
+    public (short, short, sbyte) Position;
+
     public TargetTileInfo() {
         Color = ObjectColor.None;
         GoalCount = 0;
@@ -148,15 +172,23 @@ public class TargetTileInfo : TileData {
         GoalCount = data[1];
     }
 
-    public byte[] GetData(Version v) {
-        return new byte[] { (byte)Color, GoalCount };
+    public GridType GetGridType() {
+        return GridType.Target;
+    }
+
+    public void SetPosition((short, short, sbyte) position) {
+        Position = position;
+    }
+
+    public (short, short, sbyte) GetPosition() {
+        return Position;
     }
 
     public short GetDataSize(Version v) {
         return 2;
     }
 
-    public GridType GetGridType() {
-        return GridType.Target;
+    public byte[] GetData(Version v) {
+        return new byte[] { (byte)Color, GoalCount };
     }
 }
