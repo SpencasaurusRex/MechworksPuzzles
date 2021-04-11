@@ -2,7 +2,7 @@
 
 public class Spawner : MonoBehaviour {
     // Configuration
-    public ObjectColor Color;
+    public ColorTileInfo Data;
 
     public GameObject[] BlockPrefabs;
 
@@ -19,9 +19,12 @@ public class Spawner : MonoBehaviour {
         GameController.Instance.SetValidSpace(gridObject.Location);
 
         Create();
+    }
 
+    public void AssignData(TileData data) {
+        Data = data as ColorTileInfo;
         var sr = GetComponent<SpriteRenderer>();
-        sr.color = GameData.Instance.Colors[(int)Color];
+        sr.color = GameData.Instance.Colors[(int)Data.Color];
     }
 
     void Tick() {
@@ -31,7 +34,7 @@ public class Spawner : MonoBehaviour {
     void Create() {
         var objPosition = gridObject.Location.ObjectLayer();
         if (GameController.Instance.GetGridObject(objPosition) == null) {
-            GameObject prefab = BlockPrefabs[(int)Color];
+            GameObject prefab = BlockPrefabs[(int)Data.Color];
             Instantiate(prefab, objPosition.ToFloat(), Quaternion.identity);
         }
     }

@@ -12,6 +12,12 @@ public class Robot : MonoBehaviour {
 
     SpriteRenderer[] ConnectionSprites;
 
+    RobotTileInfo Data;
+
+    public void AssignData(TileData tileData) {
+        Data = tileData as RobotTileInfo;
+    }
+    
     void Awake() {
         gridObject = GetComponent<GridObject>();
         gridObject.Type = GridType.Robot;

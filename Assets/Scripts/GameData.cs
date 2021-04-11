@@ -12,4 +12,8 @@ public class GameData : SerializedMonoBehaviour {
     
     public Dictionary<GridType, Sprite> GridSprites;
     public Color[] Colors;
+
+    public Dictionary<GridType, GameObject> TilePrefabs;
+
+    public GameObject EmptyGameObjectPrefab;
 }

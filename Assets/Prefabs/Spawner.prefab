@@ -45,8 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c6cc0ff4e4f0404f9275371683c6282, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Color: 0
   BlockPrefabs:
+  - {fileID: 5044604087420950542, guid: 1196624b7febf3742b86802e8a0c7d25, type: 3}
   - {fileID: 5044604087420950542, guid: ca00b29c3006bb94fa4f1b62b802e6b4, type: 3}
   - {fileID: 5044604087420950542, guid: ed08d064f3647e3469bf3f752574ae2e, type: 3}
   - {fileID: 5044604087420950542, guid: 742ff91a6c8dbe545a2b85dde69dff20, type: 3}

@@ -226,7 +226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b11d82028872dad45b47de64aa7ea457, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Color: 2
+  Color: 3
   SideSprites:
   - {fileID: -3863814272992617321, guid: d6a6281300b958143bbbcaef4fd8886e, type: 3}
   - {fileID: -6128376324115069724, guid: d6a6281300b958143bbbcaef4fd8886e, type: 3}

@@ -2,7 +2,7 @@
 
 public class Target : MonoBehaviour {
     // Configuration
-    public ColorTileInfo Data;
+    public TargetTileInfo Data;
 
     // Runtime
     GridObject gridObject;
@@ -20,9 +20,6 @@ public class Target : MonoBehaviour {
 
         GameController.Instance.SetValidSpace(gridObject.Location);
 
-        var sr = GetComponent<SpriteRenderer>();
-        sr.color = GameData.Instance.Colors[(int)Data.Color];
-
         neighborTargets = new Target[4];
         for (int i = 0; i < 4; i++) {
             var neighborPos = gridObject.Location + SideUtil.ToVector((Side)i);
@@ -33,6 +30,12 @@ public class Target : MonoBehaviour {
         }
     }
 
+    public void AssignData(TileData data) {
+        Data = data as TargetTileInfo;
+        var sr = GetComponent<SpriteRenderer>();
+        sr.color = GameData.Instance.Colors[(int)Data.Color];
+    }
+
     public bool Satisfied;
     
     void Tick() {
@@ -40,7 +43,7 @@ public class Target : MonoBehaviour {
         var go = GameController.Instance.GetGridObject(gridObject.Location.ObjectLayer());
         if (go != null) {
             var box = go.GetComponent<Block>();
-            if (box != null && box.Color == Data.Color) {
+            if (box != null && box.Data.Color == Data.Color) {
                 Satisfied = true;
             }
         }
@@ -56,5 +59,8 @@ public class Target : MonoBehaviour {
         var go = GameController.Instance.GetGridObject(gridObject.Location.ObjectLayer());
         Destroy(go.gameObject);
         currentCount++;
+
+        // TODO: Check for target reached
+        // Data.GoalCount;
     }
 }

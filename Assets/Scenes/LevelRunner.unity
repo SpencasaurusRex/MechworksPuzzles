@@ -416,6 +416,8 @@ GameObject:
   m_Component:
   - component: {fileID: 767287859}
   - component: {fileID: 767287860}
+  - component: {fileID: 767287861}
+  - component: {fileID: 767287862}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -453,6 +455,279 @@ MonoBehaviour:
   Running: 0
   Logging: 1
   TickerText: {fileID: 0}
+--- !u!114 &767287861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 767287858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97e3d30275b361f4fa746bb797ac23c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &767287862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 767287858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28b8b110d7c206c448a50b626b195bbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
+    - {fileID: 21300000, guid: 61ccf05817f05f944977966fe7b2ef58, type: 3}
+    - {fileID: 1515622694917723629, guid: d5c5c143d9acc8846905f560ae7ccde1, type: 3}
+    - {fileID: 21300000, guid: b1a1b44abbad39f4e8f58536901cdfd7, type: 3}
+    - {fileID: 21300000, guid: 3aa8e11a7e45bb446a4f1718fbbc5c5a, type: 3}
+    - {fileID: 21300000, guid: 5087f3876aa887944ad44aeac76fa1bf, type: 3}
+    - {fileID: -3218248262026354849, guid: c7fe9a43ff54cfd49809b60d43f71891, type: 3}
+    - {fileID: 21300000, guid: 8ef18a24841349f41b30ce7fe8b28a00, type: 3}
+    - {fileID: 5702470711023321172, guid: d4d14ba7ad4253747981878212e94f5d, type: 3}
+    - {fileID: 862773831454729187, guid: c252b34e2ed594b42a4e418ce99d161c, type: 3}
+    - {fileID: 5044604087420950542, guid: 1196624b7febf3742b86802e8a0c7d25, type: 3}
+    - {fileID: 342309171670384595, guid: 12ea0db8b5a96004d859bafeb527d106, type: 3}
+    - {fileID: 452612871244458525, guid: 4d0a2123b3f907a4a8b21f0f25095a41, type: 3}
+    - {fileID: 3504545801864168392, guid: 7b6add91c409ad74f95ad74291c648f1, type: 3}
+    - {fileID: 3869670381435662539, guid: f9af811d1a4dc684b8a7e0130dec65cd, type: 3}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: GridSprites
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[GridType, Assembly-CSharp],[UnityEngine.Sprite,
+        UnityEngine.CoreModule]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.EnumEqualityComparer`1[[GridType, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 7
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 1
+    - Name: $v
+      Entry: 10
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 3
+    - Name: $v
+      Entry: 10
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 4
+    - Name: $v
+      Entry: 10
+      Data: 2
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 5
+    - Name: $v
+      Entry: 10
+      Data: 3
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 6
+    - Name: $v
+      Entry: 10
+      Data: 4
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 7
+    - Name: $v
+      Entry: 10
+      Data: 5
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 2
+    - Name: $v
+      Entry: 10
+      Data: 6
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: TilePrefabs
+      Entry: 7
+      Data: 2|System.Collections.Generic.Dictionary`2[[GridType, Assembly-CSharp],[UnityEngine.GameObject,
+        UnityEngine.CoreModule]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 3|System.Collections.Generic.EnumEqualityComparer`1[[GridType, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 7
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 1
+    - Name: $v
+      Entry: 10
+      Data: 7
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 2
+    - Name: $v
+      Entry: 10
+      Data: 8
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 3
+    - Name: $v
+      Entry: 10
+      Data: 9
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 4
+    - Name: $v
+      Entry: 10
+      Data: 10
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 5
+    - Name: $v
+      Entry: 10
+      Data: 11
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 6
+    - Name: $v
+      Entry: 10
+      Data: 12
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 7
+    - Name: $v
+      Entry: 10
+      Data: 13
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+  Colors:
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 0, b: 0.010199547, a: 1}
+  - {r: 0.016121149, g: 1, b: 0, a: 1}
+  - {r: 0, g: 0.054534435, b: 1, a: 1}
+  EmptyGameObjectPrefab: {fileID: 2148770908701705300, guid: c7ee3beb585744349879a02e91bfee72, type: 3}
 --- !u!1 &1009626994
 GameObject:
   m_ObjectHideFlags: 0

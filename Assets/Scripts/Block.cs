@@ -3,7 +3,7 @@
 [SelectionBase]
 public class Block : MonoBehaviour {
     // Configuration
-    public ObjectColor Color;
+    public ColorTileInfo Data;
 
     public Sprite[] SideSprites;
     public Sprite[] CornerSprites;
@@ -20,13 +20,16 @@ public class Block : MonoBehaviour {
     }
 
     void Start() {
-        sideSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
-        sideSprite.color = GameData.Instance.Colors[(int)Color];    
-        cornerSprite = transform.GetChild(1).GetComponent<SpriteRenderer>();
-        cornerSprite.color = GameData.Instance.Colors[(int)Color];    
-        
         gridObject.OnConnect += OnConnect;
         gridObject.OnDisconnect += OnDisconnect;
+    }
+
+    public void AssignData(TileData data) {
+        Data = data as ColorTileInfo;
+        sideSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        sideSprite.color = GameData.Instance.Colors[(int)Data.Color];
+        cornerSprite = transform.GetChild(1).GetComponent<SpriteRenderer>();
+        cornerSprite.color = GameData.Instance.Colors[(int)Data.Color];
     }
 
     void OnDestroy() {

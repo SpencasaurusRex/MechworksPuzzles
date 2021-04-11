@@ -33,10 +33,6 @@ public class GameController : MonoBehaviour
         else instance = this;
     }
 
-    void Start() {
-        
-    }
-
     void PlayButton() {
         if (Running) {
 
@@ -78,8 +74,12 @@ public class GameController : MonoBehaviour
     }
 
     HashSet<Vector3Int> validSpaces = new HashSet<Vector3Int>();
-    Dictionary<Vector3Int, GridObject> gridObjects = new Dictionary<Vector3Int, GridObject>();
     Dictionary<GridObject, Group> groups = new Dictionary<GridObject, Group>();
+    TileGrid Tiles = new TileGrid();
+
+    public void SetGridObject(GridObject obj) => Tiles.AddTile(obj.Location, obj);
+    public GridObject GetGridObject(Vector3Int position) => Tiles.GetTile(position);
+    public void RemoveGridObject(Vector3Int position) => Tiles.RemoveTile(position);
 
     List<Move> RequestedMoves = new List<Move>();
 
@@ -89,20 +89,6 @@ public class GameController : MonoBehaviour
 
     public void SetValidSpace(Vector3Int space) {
         validSpaces.Add(space.GroundLayer());
-    }
-
-    public void SetGridObject(GridObject obj) {
-        gridObjects.Add(obj.Location, obj);
-    }
-
-    public void RemoveGridObject(Vector3Int location) {
-        gridObjects.Remove(location);
-    }
-    public GridObject GetGridObject(Vector3Int position) {
-        if (gridObjects.ContainsKey(position)) {
-            return gridObjects[position];
-        }
-        return null;
     }
 
     bool IsValidSpace(Vector3Int location) {
@@ -276,11 +262,11 @@ public class GameController : MonoBehaviour
         // 5. Perform the moves
         foreach (var move in distinctMoves) {
             if (move.Blocked) continue;
-            gridObjects.Remove(move.From);
+            Tiles.RemoveTile(move.From);
         }
         foreach (var move in distinctMoves) {
             if (move.Blocked) continue;
-            gridObjects.Add(move.To, move.Object);
+            Tiles.AddTile(move.To, move.Object);
             move.Object.Location = move.To;
             lerpMoves.Add(move);
         }
@@ -301,7 +287,8 @@ public class GameController : MonoBehaviour
         //    Gizmos.DrawCube(pos.ToFloat(), Vector3.one * 0.6f);
         //}
 
-        foreach (var pos in gridObjects.Keys)
+        if (Tiles?.Tiles == null) return;
+        foreach (var pos in Tiles.Tiles.Keys)
         {
             if (pos.z == -1) {
                 continue;
