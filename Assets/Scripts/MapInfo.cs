@@ -20,11 +20,21 @@ public class MapInfo {
     // TODO
 }
 
+public struct Version {
+    public byte Major;
+    public byte Minor;
+
+    public Version(byte major, byte minor) {
+        Major = major;
+        Minor = minor;
+    }
+}
+
 public interface TileData {
     GridType GetGridType();
-    short GetDataSize();
-    byte[] GetData();
-    void Deserialize(byte[] data);
+    short GetDataSize(Version v);
+    byte[] GetData(Version v);
+    void Deserialize(byte[] data, Version v);
 }
 
 // Basic Tiles
@@ -38,16 +48,15 @@ public class BasicTileInfo : TileData {
         return type;
     }
 
-    public short GetDataSize() {
+    public short GetDataSize(Version v) {
         return 0;
     }
 
-    public byte[] GetData() {
+    public byte[] GetData(Version v) {
         return new byte[0];
     }
 
-    public void Deserialize(byte[] data) {
-        System.Diagnostics.Debug.Assert(data.Length == 0);
+    public void Deserialize(byte[] data, Version v) {
         return;
     }
 }
@@ -74,15 +83,15 @@ public class ColorTileInfo : TileData {
         return Type;
     }
 
-    public short GetDataSize() {
+    public short GetDataSize(Version v) {
         return 1;
     }
 
-    public byte[] GetData() {
+    public byte[] GetData(Version v) {
         return new byte[] { (byte)Color };
     }
 
-    public void Deserialize(byte[] data) {
+    public void Deserialize(byte[] data, Version v) {
         System.Diagnostics.Debug.Assert(data.Length == 1);
         Color = (ObjectColor)data[0];
     }
@@ -92,32 +101,62 @@ public class SpawnerTileInfo : ColorTileInfo {
     public SpawnerTileInfo() : base(GridType.Spawner) {}
     public SpawnerTileInfo(ObjectColor color) : base(GridType.Spawner, color) {} 
 }
-public class TargetTileInfo  : ColorTileInfo { 
-    public TargetTileInfo () : base(GridType.Target) {}
-    public TargetTileInfo (ObjectColor color) : base(GridType.Target, color) {} 
-}
 public class BlockTileInfo   : ColorTileInfo {
-    public BlockTileInfo ()  : base(GridType.Block) {}
+    public BlockTileInfo  () : base(GridType.Block) {}
     public BlockTileInfo (ObjectColor color) : base(GridType.Block, color) {}
 }
 
 // Robot tiles
 public class RobotTileInfo : TileData {
     public string Code;
-    public void Deserialize(byte[] data) {
+    
+    public void Deserialize(byte[] data, Version v) {
         Code = Encoding.ASCII.GetString(data);
     }
 
-    public byte[] GetData() {
+    public byte[] GetData(Version v) {
         return Encoding.ASCII.GetBytes(Code);
     }
 
-    public short GetDataSize() {
+    public short GetDataSize(Version v) {
         if (Code == null) Code = "";
         return (short)Encoding.UTF8.GetBytes(Code).Length;
     }
 
     public GridType GetGridType() {
         return GridType.Robot;
+    }
+}
+
+// Target tiles
+public class TargetTileInfo : TileData { 
+    public ObjectColor Color;
+    public byte GoalCount;
+    
+    public TargetTileInfo() {
+        Color = ObjectColor.None;
+        GoalCount = 0;
+    }
+
+    public TargetTileInfo (ObjectColor color, byte goalCount) {
+        this.Color = color;
+        this.GoalCount = goalCount;
+    }
+
+    public void Deserialize(byte[] data, Version v) {
+        Color = (ObjectColor)data[0];
+        GoalCount = data[1];
+    }
+
+    public byte[] GetData(Version v) {
+        return new byte[] { (byte)Color, GoalCount };
+    }
+
+    public short GetDataSize(Version v) {
+        return 2;
+    }
+
+    public GridType GetGridType() {
+        return GridType.Target;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 using System.Linq;
 
@@ -6,8 +7,8 @@ public class EditorController : MonoBehaviour {
     // Configuration
     public EditorTile EditorTilePrefab;
     public Transform TilesParent;
-    public UnityEngine.UI.Image GroundLayerVisibilityButton;
-    public UnityEngine.UI.Image ObjectLayerVisibilityButton;
+    public Image GroundLayerVisibilityButton;
+    public Image ObjectLayerVisibilityButton;
 
     public Sprite[] VisibilityButtonSprites;
     public GameObject TilesPanel;
@@ -116,7 +117,6 @@ public class EditorController : MonoBehaviour {
                 }
             }
         }
-
     }
 
     public void CreateEditorTile(TileData info, int x, int y, int layer) {

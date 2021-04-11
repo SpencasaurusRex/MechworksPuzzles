@@ -27,9 +27,12 @@ public class EditorTile : MonoBehaviour {
         switch (Type) {
             case GridType.Block:
             case GridType.Spawner:
-            case GridType.Target:
                 var colorData = tileInfo as ColorTileInfo;
                 sr.color = GameData.Instance.Colors[(int)colorData.Color];
+                break;
+            case GridType.Target:
+                var targetData = tileInfo as TargetTileInfo;
+                sr.color = GameData.Instance.Colors[(int)targetData.Color];
                 break;
         }
     }

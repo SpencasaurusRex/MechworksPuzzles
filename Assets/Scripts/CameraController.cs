@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
+
 public class CameraController : MonoBehaviour
 {
     // Configuration
@@ -8,7 +10,6 @@ public class CameraController : MonoBehaviour
     public float MinSize = 5f;
     public float MaxSize = 20f;
 
-
     // Runtime
     Camera cam;
 
@@ -17,6 +18,7 @@ public class CameraController : MonoBehaviour
     }
 
     void Update() {
+        if (EventSystem.current == null) return;
         var speedMod = CameraSpeed * cam.orthographicSize * Time.deltaTime;
         transform.position += Input.GetAxisRaw("Horizontal") * Vector3.right * CameraSpeed * speedMod;
         transform.position += Input.GetAxisRaw("Vertical") * Vector3.up * speedMod;

@@ -21,8 +21,7 @@ public class ColorPanel : MonoBehaviour, TilePropertiesPanel {
     }
 
     public void UpdateDropdown() {
-        var colorText = colorDropdown.options[colorDropdown.value].text;
-        ObjectColor color = (ObjectColor)Enum.Parse(typeof(ObjectColor), colorText);
+        ObjectColor color = (ObjectColor)colorDropdown.value;
         
         ColorTileInfo info = tile.Data as ColorTileInfo;
         info.Color = color;

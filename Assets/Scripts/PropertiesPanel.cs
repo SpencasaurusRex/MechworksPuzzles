@@ -8,10 +8,12 @@ public class PropertiesPanel : MonoBehaviour {
 
     NonePanel nonePanel;
     ColorPanel colorPanel;
+    TargetPanel targetPanel;
 
     void Start() {
         nonePanel = transform.Find("NonePanel").GetComponent<NonePanel>();
         colorPanel = transform.Find("ColorPanel").GetComponent<ColorPanel>();
+        targetPanel = transform.Find("TargetPanel").GetComponent<TargetPanel>();
     }
 
     void Update() {
@@ -49,26 +51,24 @@ public class PropertiesPanel : MonoBehaviour {
         
         nonePanel.gameObject.SetActive(false);
         colorPanel.gameObject.SetActive(false);
-
-        TilePropertiesPanel panel = null;
+        targetPanel.gameObject.SetActive(false);
 
         if (SelectedTile != null) {
             switch (SelectedTile.Type) {
                 case GridType.Block:
                 case GridType.Spawner:
-                case GridType.Target:
                     colorPanel.gameObject.SetActive(true);
-                    panel = colorPanel;
+                    colorPanel.Assign(tile);
+                    break;
+                case GridType.Target:
+                    targetPanel.gameObject.SetActive(true);
+                    targetPanel.Assign(tile);
                     break;
                 default: 
                     nonePanel.gameObject.SetActive(true);
-                    panel = nonePanel;
+                    nonePanel.Assign(tile);
                     break;
             }
-        }
-
-        if (panel != null) {
-            panel.Assign(tile);
         }
     }
 
