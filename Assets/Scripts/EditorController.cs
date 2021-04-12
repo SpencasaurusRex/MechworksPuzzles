@@ -15,10 +15,11 @@ public class EditorController : MonoBehaviour {
     public Transform HighlightRect;
 
     public bool Debug;
+    public Vector3 LastMouseWorldPosition;
 
     // Runtime
     public static EditorController Instance {get; set;}
-    
+
     TileSelect SelectedBrush;
     Dictionary<Vector3Int, EditorTile> Tiles = new Dictionary<Vector3Int, EditorTile>();
 
@@ -29,6 +30,23 @@ public class EditorController : MonoBehaviour {
 
     void Update() {
         HighlightRect.position = Vector3.Lerp(HighlightRect.position, Util.MouseTilePosition(Camera.main).WithZ(5), 0.4f);
+
+        if (Input.GetMouseButton(2) && !lostFocus) {
+            Camera.main.transform.position += (LastMouseWorldPosition - Util.MouseWorldPosition(Camera.main));
+        }
+        
+        LastMouseWorldPosition = Util.MouseWorldPosition(Camera.main);
+        
+        if (currentFocus) {
+            lostFocus = false;
+        }
+    }
+
+    bool currentFocus;
+    bool lostFocus;
+    void OnApplicationFocus(bool focusStatus) {
+        currentFocus = focusStatus;
+        if (!focusStatus) lostFocus = true;
     }
 
     public void Serialize() {

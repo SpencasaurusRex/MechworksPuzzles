@@ -56,10 +56,6 @@ public class TileSelectPanel : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButton(2)) {
-            Camera.main.transform.position += (LastMouseWorldPosition - Util.MouseWorldPosition(Camera.main));
-        }
-
         LastMouseWorldPosition = Util.MouseWorldPosition(Camera.main);
     }
 
