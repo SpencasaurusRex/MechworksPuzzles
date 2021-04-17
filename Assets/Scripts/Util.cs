@@ -125,5 +125,23 @@ public static class Util {
             default:
                 throw new NotImplementedException($"GridType {type} is not implemented in ToGridLayer");
         }
-    } 
+    }
+
+    public static Vector3Int ToDelta(Side side) {
+        switch (side) {
+            case Side.Right: 
+                return Vector3Int.right;
+            case Side.Up:
+                return Vector3Int.up;
+            case Side.Left:
+                return Vector3Int.left;
+            case Side.Down:
+                return Vector3Int.down;
+        }
+        return Vector3Int.zero;
+    }
+
+    public static Vector3Int ToDelta(int i) {
+        return ToDelta((Side)i);
+    }
 }

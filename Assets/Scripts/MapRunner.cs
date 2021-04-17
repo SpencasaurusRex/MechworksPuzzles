@@ -1,12 +1,17 @@
+using System.IO;
 using UnityEngine;
 
 public class MapRunner : MonoBehaviour {
+    public string MapPath;
+
     void Start() {
-        LoadMap(@"C:\Projects\MechworksPuzzles\Assets\Maps\testmap.mpm");
+        var text = Resources.Load<TextAsset>(MapPath);
+
+        LoadMap(new MemoryStream(text.bytes));
     }
     
-    public void LoadMap(string path) {
-        MapInfo info = MapReader.ReadMap(path);
+    public void LoadMap(Stream stream) {
+        MapInfo info = MapReader.ReadMap(stream);
 
         var empty = GameData.Instance.EmptyGameObjectPrefab;
 

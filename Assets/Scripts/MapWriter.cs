@@ -27,9 +27,9 @@ public static class MapWriter {
 }
 
 public static class MapReader {
-    public static MapInfo ReadMap(string path) {
+    public static MapInfo ReadMap(Stream stream) {
         MapInfo info = new MapInfo();
-        using (BinaryReader reader = new BinaryReader(File.Open(path, FileMode.Open))) {
+        using (BinaryReader reader = new BinaryReader(stream)) {
             info.VersionMajor = reader.ReadByte();
             info.VersionMinor = reader.ReadByte();
             Version v = new Version(info.VersionMajor, info.VersionMinor);

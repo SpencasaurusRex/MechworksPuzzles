@@ -470,6 +470,8 @@ GameObject:
   m_Component:
   - component: {fileID: 767287859}
   - component: {fileID: 767287860}
+  - component: {fileID: 767287862}
+  - component: {fileID: 767287861}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -505,11 +507,50 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TickLength: 0.2
   Running: 1
-  Colors:
-  - {r: 1, g: 0, b: 0, a: 1}
-  - {r: 0, g: 1, b: 0, a: 1}
-  - {r: 0, g: 0, b: 1, a: 1}
+  Logging: 0
   TickerText: {fileID: 1533085509}
+--- !u!114 &767287861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 767287858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28b8b110d7c206c448a50b626b195bbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: GridSprites
+      Entry: 6
+      Data: 
+    - Name: TilePrefabs
+      Entry: 6
+      Data: 
+  Colors: []
+  EmptyGameObjectPrefab: {fileID: 0}
+--- !u!114 &767287862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 767287858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97e3d30275b361f4fa746bb797ac23c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MapPath: 
 --- !u!1 &1533085507
 GameObject:
   m_ObjectHideFlags: 0

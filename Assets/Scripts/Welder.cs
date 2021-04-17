@@ -19,7 +19,7 @@ public class Welder : MonoBehaviour
 
         // Find connected welders
         for (int i = 0; i < 4; i++) {
-            var go = GameController.Instance.GetGridObject(gridObject.Location + SideUtil.ToVector((Side)i));
+            var go = GameController.Instance.GetGridObject(gridObject.Location + Util.ToDelta((Side)i));
             if (go == null || go.Type != GridType.Welder) continue;
             connectedWelders[i] = go.GetComponent<Welder>();
         }
@@ -33,7 +33,7 @@ public class Welder : MonoBehaviour
             if (go.Type != GridType.Block) return;
             for (int i = 0; i < 4; i++) {
                 if (connectedWelders[i] == null) continue;
-                Vector3Int delta = SideUtil.ToVector((Side)i);
+                Vector3Int delta = Util.ToDelta((Side)i);
                 var otherGo = GameController.Instance.GetGridObject(objectPos + delta);
                 if (otherGo != null && otherGo.Type == GridType.Block) {
                     go.ConnectSide((Side)i);

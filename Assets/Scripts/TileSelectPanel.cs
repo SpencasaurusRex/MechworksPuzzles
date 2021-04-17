@@ -55,8 +55,6 @@ public class TileSelectPanel : MonoBehaviour
                 Destroy(tile.gameObject);
             }
         }
-
-        LastMouseWorldPosition = Util.MouseWorldPosition(Camera.main);
     }
 
     public void SelectTile(TileSelect tile) {

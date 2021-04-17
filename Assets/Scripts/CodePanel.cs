@@ -13,17 +13,23 @@ public class CodePanel : MonoBehaviour {
 
     void Start() {
         text = GetComponentInChildren<Text>();
-        text.text = robot.Code;
+        foreach (var command in robot.Commands) {
+            text.text += command.ToText() + "\n";
+        }
 
         GameController.Instance.OnTick2 += Tick;
         targetHighlight = HighlightPanel.anchoredPosition;
     }
 
+    void ParseCode() {
+
+    }
+
     int i = 0;
 
     void Tick() {
-        targetHighlight = new Vector2(targetHighlight.x, LineOffset * i);
         i = robot.CommandIndex;
+        targetHighlight = new Vector2(targetHighlight.x, LineOffset * i);
     }
 
     void Update() {

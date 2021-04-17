@@ -2,7 +2,7 @@
 
 public class Spawner : MonoBehaviour {
     // Configuration
-    public ColorTileInfo Data;
+    public ColorTileInfo Data = new ColorTileInfo(GridType.Spawner, ObjectColor.None);
 
     public GameObject[] BlockPrefabs;
 

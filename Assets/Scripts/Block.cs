@@ -22,6 +22,8 @@ public class Block : MonoBehaviour {
     void Start() {
         gridObject.OnConnect += OnConnect;
         gridObject.OnDisconnect += OnDisconnect;
+        sideSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        cornerSprite = transform.GetChild(1).GetComponent<SpriteRenderer>();
     }
 
     public void AssignData(TileData data) {

@@ -22,7 +22,7 @@ public class Target : MonoBehaviour {
 
         neighborTargets = new Target[4];
         for (int i = 0; i < 4; i++) {
-            var neighborPos = gridObject.Location + SideUtil.ToVector((Side)i);
+            var neighborPos = gridObject.Location + Util.ToDelta((Side)i);
             var neighborGo = GameController.Instance.GetGridObject(neighborPos.GroundLayer());
             if (neighborGo != null) {
                 neighborTargets[i] = neighborGo.GetComponent<Target>();
@@ -43,6 +43,7 @@ public class Target : MonoBehaviour {
         var go = GameController.Instance.GetGridObject(gridObject.Location.ObjectLayer());
         if (go != null) {
             var box = go.GetComponent<Block>();
+            box.Data = new ColorTileInfo(GridType.Block, Data.Color);
             if (box != null && box.Data.Color == Data.Color) {
                 Satisfied = true;
             }

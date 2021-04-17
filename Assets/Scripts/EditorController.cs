@@ -90,14 +90,14 @@ public class EditorController : MonoBehaviour {
     }
 
     public void Deserialize() {
-        Reset();
+        // Reset();
 
-        MapInfo info = MapReader.ReadMap(@"C:\Projects\MechworksPuzzles\Assets\Maps\testmap.mpm");
+        // MapInfo info = MapReader.ReadMap(@"C:\Projects\MechworksPuzzles\Assets\Maps\testmap.mpm");
         
-        for (int i = 0; i < info.NumberOfTiles; i++) {
-            TileData tileInfo = info.Tiles[i];
-            CreateEditorTile(tileInfo);
-        }
+        // for (int i = 0; i < info.NumberOfTiles; i++) {
+        //     TileData tileInfo = info.Tiles[i];
+        //     CreateEditorTile(tileInfo);
+        // }
     }
 
     public void CreateEditorTile(TileData info) {

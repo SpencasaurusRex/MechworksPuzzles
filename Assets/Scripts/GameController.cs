@@ -12,6 +12,9 @@ public class GameController : MonoBehaviour
     public event Tick OnTick;
     public event Tick OnTick2;
 
+    public delegate void TickComplete();
+    public event TickComplete OnTickComplete;
+
     // Configuration
     public float TickLength = 1f;
     public bool Running = true;
@@ -21,8 +24,11 @@ public class GameController : MonoBehaviour
     public TextMeshProUGUI TickerText;
 
     // Runtime
-    int tickNumber;
+    int tickNumber = 0;
     float t;
+
+    public int TargetTick;
+    public int TickNumber => tickNumber;
 
     public float PercentComplete => t;
 
@@ -34,43 +40,38 @@ public class GameController : MonoBehaviour
     }
 
     void PlayButton() {
-        if (Running) {
-
-        }
+        Running = !Running;
     }
 
     void FastButton() {
 
     }
 
-    void RecordButton() {
+    void Update() {
+        if (Running || tickNumber < TargetTick) {
+            t = Mathf.Clamp01(t + Time.deltaTime / TickLength);
 
+            foreach (var lerpMove in lerpMoves) {
+                if (lerpMove.Object == null) continue;
+                lerpMove.Object.transform.position = Vector3.Lerp(lerpMove.From, lerpMove.To, t);
+            }
+            
+            if (t == 1.0f) {
+                tickNumber++;
+                t = 0;
+                OnTickComplete?.Invoke();
+            }
+        }
     }
 
-    void Update() {
-        if (!Running) return;
-        t = Mathf.Clamp01(t + Time.deltaTime / TickLength);
-
-        foreach (var lerpMove in lerpMoves) {
-            if (lerpMove.Object == null) continue;
-            lerpMove.Object.transform.position = Vector3.Lerp(lerpMove.From, lerpMove.To, t);
-        }
-
-        if (t == 1.0f) {
-            lerpMoves.Clear();
-            tickNumber++;
-            if (TickerText != null)
-                TickerText.text = $"Ticks: {tickNumber}";
-            OnTick?.Invoke();
-            OnTick2?.Invoke();
-            try {
-                HandleRequests();
-            } catch (Exception ex) {
-                Debug.LogError(ex);
-                Running = false;
-            }
-            t = 0;
-        }
+    public void ExecuteTick() {
+        lerpMoves.Clear();
+        if (TickerText != null)
+            TickerText.text = $"Ticks: {tickNumber}";
+        OnTick?.Invoke();
+        OnTick2?.Invoke();
+        HandleRequests();
+        TargetTick++;
     }
 
     HashSet<Vector3Int> validSpaces = new HashSet<Vector3Int>();

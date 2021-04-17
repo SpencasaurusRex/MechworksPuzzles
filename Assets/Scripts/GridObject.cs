@@ -35,7 +35,7 @@ public class GridObject : MonoBehaviour {
     public void ConnectSide(Side side) {
         int s = (int)side;
         if (Connected[s] != null) return;
-        var go = GameController.Instance.GetGridObject(Location + SideUtil.ToVector(side));
+        var go = GameController.Instance.GetGridObject(Location + Util.ToDelta(side));
         
         if (go != null) {
             Connected[s] = go;
