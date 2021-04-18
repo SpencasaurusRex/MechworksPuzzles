@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class Robot : MonoBehaviour {        
     // Show in Inspector
     [TextArea]
-    public string Code;
+    string Code;
     
     // Runtime
     GridObject gridObject;
